@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.samchi.poke.feature.jungwon"
+    namespace = "com.samchi.poke.feature.kanghwi"
 }
 
 dependencies {

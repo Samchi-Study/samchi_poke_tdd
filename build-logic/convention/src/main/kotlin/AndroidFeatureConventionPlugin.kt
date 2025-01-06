@@ -1,10 +1,8 @@
 import com.android.build.gradle.LibraryExtension
 import com.samchi.poke.samples.app.configureKotlinAndroid
-import com.samchi.poke.samples.app.findVersionCatalog
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
-import org.gradle.kotlin.dsl.dependencies
 
 class AndroidFeatureConventionPlugin : Plugin<Project> {
 
@@ -19,9 +17,6 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
                 configureKotlinAndroid(this)
                 configureAndroidCompose(this)
                 defaultConfig.targetSdk = 34
-            }
-            dependencies {
-                add("implementation", findVersionCatalog().findLibrary("kotlinx.serialization.json").get())
             }
         }
     }
