@@ -30,5 +30,9 @@ gradlePlugin {
             id = "com.samchi.poke.feature"
             implementationClass = "AndroidFeatureConventionPlugin"
         }
+        register("hilt") {
+            id = "com.samchi.poke.hilt"
+            implementationClass = "HiltConventionPlugin"
+        }
     }
 }

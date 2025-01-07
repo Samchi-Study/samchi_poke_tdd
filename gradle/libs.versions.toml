@@ -13,6 +13,7 @@ composeBom = "2024.12.01"
 retrofit = "2.11.0"
 room = "2.6.1"
 hilt = "2.52"
+hiltExt = "1.2.0"
 appcompat = "1.7.0"
 material = "1.12.0"
 androidXView = "1.5.1"
@@ -73,6 +74,13 @@ androidx-compose-material3-windowSizeClass = { group = "androidx.compose.materia
 androidx-compose-activity = { module = "androidx.activity:activity-compose", version.ref = "androidXView" }
 androidx-compose-navigation = { module = "androidx.navigation:navigation-compose", version.ref = "androidXNavigation" }
 androidx-compose-constraintlayout = "androidx.constraintlayout:constraintlayout-compose:1.0.1"
+
+hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
+hilt-android-testing = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hilt" }
+hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
+hilt-core = { group = "com.google.dagger", name = "hilt-core", version.ref = "hilt" }
+hilt-ext-compiler = { group = "androidx.hilt", name = "hilt-compiler", version.ref = "hiltExt" }
+hilt-ext-work = { group = "androidx.hilt", name = "hilt-work", version.ref = "hiltExt" }
 
 # Dependencies of the included build-logic
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
