@@ -53,6 +53,12 @@ android {
 }
 
 dependencies {
+    implementation(project(":feature-jinkwang"))
+    implementation(project(":feature-jungwon"))
+    implementation(project(":feature-kanghwi"))
+    implementation(project(":feature-sanghyung"))
+    implementation(project(":feature-woosung"))
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -61,12 +67,6 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation(libs.androidx.compose.navigation)
-    implementation(project(":feature-jungwon"))
-    implementation(project(":feature-jinkwang"))
-    implementation(project(":feature-kanghwi"))
-    implementation(project(":feature-woosung"))
-    implementation(project(":feature-sanghyung"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
