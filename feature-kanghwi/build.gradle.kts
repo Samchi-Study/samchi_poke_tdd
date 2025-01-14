@@ -1,13 +1,14 @@
 plugins {
-    id("com.samchi.poke.feature")
+    alias(libs.plugins.samchi.poke.feature)
     alias(libs.plugins.compose.compiler)
 }
 
 android {
-    namespace = "com.samchi.poke.feature.kanghwi"
+    namespace = "com.samchi.poke.kanghwi"
 }
 
 dependencies {
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
