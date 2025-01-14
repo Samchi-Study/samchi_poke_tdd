@@ -4,6 +4,7 @@ androidTools = "31.7.2"
 kotlin = "2.0.20"
 coreKtx = "1.15.0"
 junit = "4.13.2"
+mockk = "1.4.1"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.8.7"
@@ -18,11 +19,14 @@ appcompat = "1.7.0"
 material = "1.12.0"
 androidXView = "1.5.1"
 androidXNavigation = "2.8.3"
+androidXComposeHiltNavigation = "1.2.0"
+lifecycleViewmodelCompose = "2.8.7"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
+test-mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
@@ -33,6 +37,7 @@ androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
+androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose" , version.ref = "lifecycleViewmodelCompose" }
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
 
@@ -75,6 +80,7 @@ androidx-compose-material3 = { group = "androidx.compose.material3", name = "mat
 androidx-compose-material3-windowSizeClass = { group = "androidx.compose.material3", name = "material3-window-size-class" }
 androidx-compose-activity = { module = "androidx.activity:activity-compose", version.ref = "androidXView" }
 androidx-compose-navigation = { module = "androidx.navigation:navigation-compose", version.ref = "androidXNavigation" }
+androidx-compose-hilt-navigation = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "androidXComposeHiltNavigation" }
 androidx-compose-constraintlayout = "androidx.constraintlayout:constraintlayout-compose:1.0.1"
 
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
@@ -114,8 +120,11 @@ compose = [
     "androidx-compose-foundation",
     "androidx-compose-runtime",
     "androidx-compose-material3",
-    "androidx-compose-ui-toolingPreview"
+    "androidx-compose-ui-toolingPreview",
+    "androidx-compose-navigation",
+    "androidx-compose-hilt-navigation"
 ]
+
 compose-preview = [
     "androidx-compose-ui-tooling"
 ]

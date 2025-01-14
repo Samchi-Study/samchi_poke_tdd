@@ -21,7 +21,11 @@ dependencies {
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
 
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+
     implementation(libs.bundles.compose)
     implementation(libs.bundles.compose.preview)
 
+
+    testImplementation(libs.test.mockk)
 }
