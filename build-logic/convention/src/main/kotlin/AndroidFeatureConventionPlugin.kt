@@ -11,6 +11,7 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
             with(pluginManager) {
                 apply("com.android.library")
                 apply("org.jetbrains.kotlin.android")
+                apply("com.samchi.poke.hilt.android")
             }
 
             extensions.configure<LibraryExtension> {

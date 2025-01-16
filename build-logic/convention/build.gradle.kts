@@ -16,6 +16,15 @@ dependencies {
     compileOnly(libs.room.gradlePlugin)
 }
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+tasks.withType<KotlinCompile>().configureEach {
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_17.toString()
+    }
+}
 
 tasks {
     validatePlugins {
@@ -30,9 +39,9 @@ gradlePlugin {
             id = "com.samchi.poke.feature"
             implementationClass = "AndroidFeatureConventionPlugin"
         }
-        register("hilt") {
-            id = "com.samchi.poke.hilt"
-            implementationClass = "HiltConventionPlugin"
+        register("androidHilt"){
+            id = "com.samchi.poke.hilt.android"
+            implementationClass = "AndroidHiltConventionPlugin"
         }
     }
 }
