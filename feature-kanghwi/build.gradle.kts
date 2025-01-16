@@ -5,18 +5,8 @@ plugins {
 
 android {
     namespace = "com.samchi.poke.kanghwi"
-}
 
-dependencies {
-
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-
-    implementation(libs.androidx.lifecycle.viewmodel.compose)
-
-    testImplementation(libs.test.mockk)
+    hilt {
+        enableAggregatingTask = true
+    }
 }
