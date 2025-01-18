@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
+
 repositories {
     gradlePluginPortal()
     google()
@@ -16,7 +18,6 @@ dependencies {
     compileOnly(libs.room.gradlePlugin)
 }
 
-
 tasks {
     validatePlugins {
         enableStricterValidation = true
@@ -30,9 +31,9 @@ gradlePlugin {
             id = "com.samchi.poke.feature"
             implementationClass = "AndroidFeatureConventionPlugin"
         }
-        register("hilt") {
-            id = "com.samchi.poke.hilt"
-            implementationClass = "HiltConventionPlugin"
+        register("androidHilt"){
+            id = "com.samchi.poke.hilt.android"
+            implementationClass = "AndroidHiltConventionPlugin"
         }
     }
 }

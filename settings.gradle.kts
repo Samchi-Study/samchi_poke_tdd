@@ -24,6 +24,6 @@ rootProject.name = "SamchiPokeTdd"
 include(":app")
 include(":feature-jungwon")
 include(":feature-jinkwang")
-include(":feature-kanghwi")
 include(":feature-woosung")
 include(":feature-sanghyung")
+include(":feature-kanghwi")
