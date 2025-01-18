@@ -7,10 +7,10 @@ plugins {
 
 android {
     namespace = "com.samchi.network"
-    compileSdk = 35
+    compileSdk = 34
 
     defaultConfig {
-        minSdk = 28
+        minSdk = 21
     }
 
     compileOptions {
@@ -27,9 +27,6 @@ android {
 
 dependencies {
 
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -37,6 +34,5 @@ dependencies {
     implementation(libs.retrofit.core)
     implementation(libs.retrofit.kotlin.serialization)
     implementation(libs.kotlinx.serialization.json)
-    implementation(libs.network.ihsanbal)
     implementation(libs.network.interceptor)
 }
