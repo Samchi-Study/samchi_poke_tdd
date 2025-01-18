@@ -10,6 +10,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.samchi.poke.feature.jinkwang.JinKwangRoute
+import com.samchi.poke.kanghwi.KanghwiRoute
+
 
 @Composable
 fun MainScreen() {
@@ -35,7 +37,7 @@ fun MainScreen() {
                     when (it.destination.route) {
                         NavigationItem.JinKwang.route -> JinKwangRoute()
                         NavigationItem.JungWon.route -> Unit
-                        NavigationItem.KangHwi .route -> Unit
+                        NavigationItem.KangHwi.route -> KanghwiRoute()
                         NavigationItem.SangHyeong.route -> Unit
                         NavigationItem.WooSung.route -> Unit
                     }
