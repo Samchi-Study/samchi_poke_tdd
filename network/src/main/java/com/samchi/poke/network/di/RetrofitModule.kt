@@ -1,6 +1,6 @@
-package com.samchi.network.di
+package com.samchi.poke.network.di
 
-import com.samchi.network.PokeApi
+import com.samchi.poke.network.PokeApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

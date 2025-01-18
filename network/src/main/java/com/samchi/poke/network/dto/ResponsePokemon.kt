@@ -1,4 +1,4 @@
-package com.samchi.network.dto
+package com.samchi.poke.network.dto
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

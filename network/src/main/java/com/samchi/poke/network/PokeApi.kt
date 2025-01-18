@@ -1,6 +1,6 @@
-package com.samchi.network
+package com.samchi.poke.network
 
-import com.samchi.network.dto.ResponsePokemonInfo
+import com.samchi.poke.network.dto.ResponsePokemonInfo
 import retrofit2.http.GET
 import retrofit2.http.Query
 

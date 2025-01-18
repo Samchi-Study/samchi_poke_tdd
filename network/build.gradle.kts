@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.samchi.network"
+    namespace = "com.samchi.poke.network"
     compileSdk = 34
 
     defaultConfig {
