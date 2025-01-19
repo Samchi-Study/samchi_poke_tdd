@@ -1,4 +1,4 @@
-package com.samchi.feature.sanghyung
+package com.samchi.poke.sanghyeong
 
 import org.junit.Test
 
