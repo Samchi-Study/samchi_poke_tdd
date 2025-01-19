@@ -58,7 +58,6 @@ android {
 dependencies {
     implementation(project(":feature-jinkwang"))
     implementation(project(":feature-jungwon"))
-    implementation(project(":feature-kanghwi"))
     implementation(project(":feature-sanghyung"))
     implementation(project(":feature-woosung"))
 
