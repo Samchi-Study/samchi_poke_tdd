@@ -10,7 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.samchi.poke.feature.jinkwang.JinKwangRoute
-import com.samchi.poke.kanghwi.KanghwiRoute
+import com.samchi.poke.presentation.KanghwiRoute
 
 
 @Composable
