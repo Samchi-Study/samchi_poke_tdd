@@ -12,6 +12,8 @@ android {
 }
 
 dependencies {
+    implementation(project(":model"))
+    implementation(project(":network"))
 
     implementation(libs.androidx.core.ktx)
 }
