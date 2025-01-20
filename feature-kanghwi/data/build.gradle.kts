@@ -16,4 +16,5 @@ dependencies {
     implementation(project(":network"))
 
     implementation(libs.androidx.core.ktx)
+    testImplementation(libs.test.mock.server)
 }
