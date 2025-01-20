@@ -5,8 +5,9 @@ kotlin = "2.0.20"
 coreKtx = "1.15.0"
 junit = "4.13.2"
 mockk = "1.4.1"
-mockServer = "3.14.9"
-robolectric = "4.13.2"
+mockServer = "4.12.0"
+robolectric = "4.11.1"
+coroutineTest = "1.9.0"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.8.7"
@@ -38,6 +39,7 @@ test-robolectric = { module = "org.robolectric:robolectric", version.ref = "robo
 test-mock-server = { module = "com.squareup.okhttp3:mockwebserver", version.ref = "mockServer"}
 test-core-ktx = { module = "androidx.test:core-ktx", version.ref = "coreKtxVersion" }
 test-ext-junit-ktx = { module = "androidx.test.ext:junit-ktx", version.ref = "junitKtx" }
+test-coroutine = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutineTest"}
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
