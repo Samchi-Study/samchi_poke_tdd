@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class KanghwiViewModel @Inject constructor(
+internal class KanghwiViewModel @Inject constructor(
     private val kanghwiRepository: KanghwiRepository
 ) : ViewModel() {
 

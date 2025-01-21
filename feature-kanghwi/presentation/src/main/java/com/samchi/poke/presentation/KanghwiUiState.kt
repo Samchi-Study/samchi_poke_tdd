@@ -3,7 +3,7 @@ package com.samchi.poke.presentation
 import com.samchi.poke.model.Pokemon
 
 
-sealed class KanghwiUiState {
+internal sealed class KanghwiUiState {
     data class Success(
         val totalCount: Int,
         val pokemonList: List<Pokemon>
