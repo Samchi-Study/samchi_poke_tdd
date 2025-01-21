@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.samchi.feature.woosung.screen.list.WoosungRoute
 import com.samchi.poke.feature.jinkwang.JinKwangRoute
 import com.samchi.poke.kanghwi.KanghwiRoute
 
@@ -27,7 +28,7 @@ fun MainScreen() {
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = NavigationItem.JinKwang.route,
+            startDestination = NavigationItem.WooSung.route,
             modifier = Modifier.padding(innerPadding)
         ) {
             NavigationItem.entries.forEach {
@@ -39,7 +40,7 @@ fun MainScreen() {
                         NavigationItem.JungWon.route -> Unit
                         NavigationItem.KangHwi.route -> KanghwiRoute()
                         NavigationItem.SangHyeong.route -> Unit
-                        NavigationItem.WooSung.route -> Unit
+                        NavigationItem.WooSung.route -> WoosungRoute()
                     }
                 }
             }
