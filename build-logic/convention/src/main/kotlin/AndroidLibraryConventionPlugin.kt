@@ -26,6 +26,10 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
             dependencies {
                 testImplementation(libs.findLibrary("junit").get())
                 testImplementation(libs.findLibrary("test-mockk").get())
+                testImplementation(libs.findLibrary("test-core-ktx").get())
+                testImplementation(libs.findLibrary("test-ext-junit-ktx").get())
+                testImplementation(libs.findLibrary("test-robolectric").get())
+                testImplementation(libs.findLibrary("test-coroutine").get())
                 androidTestImplementation(libs.findLibrary("androidx-junit").get())
                 androidTestImplementation(libs.findLibrary("androidx-espresso-core").get())
             }
