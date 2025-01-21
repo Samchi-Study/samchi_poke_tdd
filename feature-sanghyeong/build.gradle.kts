@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.samchi.feature.sanghyung"
+    namespace = "com.samchi.feature.sanghyeong"
 
     hilt {
         enableAggregatingTask = true
