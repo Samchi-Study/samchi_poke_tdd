@@ -58,8 +58,8 @@ android {
 dependencies {
     implementation(project(":feature-jinkwang"))
     implementation(project(":feature-jungwon"))
-    implementation(project(":feature-kanghwi"))
     implementation(project(":feature-sanghyeong"))
+    implementation(project(":feature-kanghwi:presentation"))
     implementation(project(":feature-woosung"))
 
     implementation(libs.androidx.core.ktx)

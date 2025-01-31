@@ -35,5 +35,9 @@ gradlePlugin {
             id = "com.samchi.poke.hilt.android"
             implementationClass = "AndroidHiltConventionPlugin"
         }
+        register("androidLibrary"){
+            id = "com.samchi.poke.library"
+            implementationClass = "AndroidLibraryConventionPlugin"
+        }
     }
 }
