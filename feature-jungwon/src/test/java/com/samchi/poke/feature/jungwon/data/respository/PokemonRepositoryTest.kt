@@ -1,4 +1,4 @@
-package com.samchi.poke.feature.jungwon
+package com.samchi.poke.feature.jungwon.data.respository
 
 import com.samchi.feature.jungwon.data.model.toPokemonPage
 import com.samchi.feature.jungwon.data.repository.PokemonRepository
