@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.samchi.poke.feature)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -16,6 +18,10 @@ dependencies {
     testImplementation(project(":network"))
     testImplementation(libs.kotlinx.serialization.json)
     
-    // 코루틴 테스트 의존성 추가
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+    implementation(libs.androidx.compose.hilt.navigation)
+    
     testImplementation(libs.test.coroutine)
+    implementation(libs.coil)
 }
