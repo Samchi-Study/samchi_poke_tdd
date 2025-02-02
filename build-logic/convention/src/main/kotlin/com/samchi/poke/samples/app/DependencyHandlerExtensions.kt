@@ -18,6 +18,9 @@ fun DependencyHandler.debugImplementation(dependencyNotation: Any): Dependency? 
 fun DependencyHandler.testImplementation(dependencyNotation: Any): Dependency? =
     add("testImplementation", dependencyNotation)
 
+fun DependencyHandler.androidTestImplementation(dependencyNotation: Any): Dependency? =
+    add("androidTestImplementation", dependencyNotation)
+
 fun DependencyHandler.kapt(dependencyNotation: Any): Dependency? =
     add("kapt", dependencyNotation)
 

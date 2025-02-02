@@ -5,6 +5,9 @@ kotlin = "2.0.20"
 coreKtx = "1.15.0"
 junit = "4.13.2"
 mockk = "1.4.1"
+mockServer = "4.12.0"
+robolectric = "4.11.1"
+coroutineTest = "1.9.0"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.8.7"
@@ -24,12 +27,19 @@ androidXView = "1.5.1"
 androidXNavigation = "2.8.3"
 androidXComposeHiltNavigation = "1.2.0"
 lifecycleViewmodelCompose = "2.8.7"
+coreKtxVersion = "1.6.1"
+junitKtx = "1.2.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 test-mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+test-robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric"}
+test-mock-server = { module = "com.squareup.okhttp3:mockwebserver", version.ref = "mockServer"}
+test-core-ktx = { module = "androidx.test:core-ktx", version.ref = "coreKtxVersion" }
+test-ext-junit-ktx = { module = "androidx.test.ext:junit-ktx", version.ref = "junitKtx" }
+test-coroutine = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutineTest"}
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
@@ -118,6 +128,7 @@ compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "
 
 # Custom Plugins
 samchi_poke_feature = { id = "com.samchi.poke.feature", version = "unspecified"}
+samchi_poke_library = { id= "com.samchi.poke.library", version = "unspcified"}
 samchi_poke_hilt = { id = "com.samchi.poke.hilt.android", version = "unspecified"}
 
 [bundles]

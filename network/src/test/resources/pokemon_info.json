@@ -1,0 +1,19 @@
+{
+  "count": 1302,
+  "next": "https://pokeapi.co/api/v2/pokemon/?offset=4&limit=3",
+  "previous": "https://pokeapi.co/api/v2/pokemon/?offset=0&limit=1",
+  "results": [
+    {
+      "name": "ivysaur",
+      "url": "https://pokeapi.co/api/v2/pokemon/2/"
+    },
+    {
+      "name": "venusaur",
+      "url": "https://pokeapi.co/api/v2/pokemon/3/"
+    },
+    {
+      "name": "charmander",
+      "url": "https://pokeapi.co/api/v2/pokemon/4/"
+    }
+  ]
+}
