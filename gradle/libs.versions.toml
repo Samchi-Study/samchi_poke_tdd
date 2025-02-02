@@ -29,6 +29,7 @@ androidXComposeHiltNavigation = "1.2.0"
 lifecycleViewmodelCompose = "2.8.7"
 coreKtxVersion = "1.6.1"
 junitKtx = "1.2.1"
+coil = "3.0.4"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -95,6 +96,9 @@ androidx-compose-activity = { module = "androidx.activity:activity-compose", ver
 androidx-compose-navigation = { module = "androidx.navigation:navigation-compose", version.ref = "androidXNavigation" }
 androidx-compose-hilt-navigation = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "androidXComposeHiltNavigation" }
 androidx-compose-constraintlayout = "androidx.constraintlayout:constraintlayout-compose:1.0.1"
+
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil"}
+coil-network = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coil"}
 
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-android-testing = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hilt" }
