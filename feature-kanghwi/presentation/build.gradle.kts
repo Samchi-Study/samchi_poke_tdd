@@ -15,4 +15,7 @@ dependencies {
     implementation(project(":model"))
     implementation(project(":feature-kanghwi:data"))
     implementation(project(":feature-kanghwi:common"))
+
+    implementation(libs.coil.compose)
+    implementation(libs.coil.network)
 }
