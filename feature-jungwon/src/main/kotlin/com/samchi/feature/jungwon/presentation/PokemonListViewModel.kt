@@ -23,7 +23,7 @@ class PokemonListViewModel @Inject constructor(
 
     fun loadFirstPage() {
         viewModelScope.launch {
-            _uiState.value = PokemonListUiState.Loading
+            _uiState.emit(PokemonListUiState.Loading)
             pokemonRepository.getPokemonPage()
                 .handleUiState()
         }
