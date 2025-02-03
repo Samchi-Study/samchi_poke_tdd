@@ -3,15 +3,15 @@ package com.samchi.poke.presentation
 import com.samchi.poke.model.Pokemon
 
 
-internal sealed class KanghwiUiState {
+internal sealed class UiState {
     data class Success(
         val totalCount: Int,
         val pokemonList: List<Pokemon>
-    ) : KanghwiUiState()
+    ) : UiState()
 
     data class Error(
         val throwable: Throwable? = null
-    ) : KanghwiUiState()
+    ) : UiState()
 
-    data object Loading : KanghwiUiState()
+    data object Loading : UiState()
 }

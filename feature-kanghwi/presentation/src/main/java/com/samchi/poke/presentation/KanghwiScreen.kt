@@ -40,18 +40,18 @@ internal fun KanghwiScreen(
     modifier: Modifier = Modifier,
     viewModel: KanghwiViewModel = hiltViewModel()
 ) {
-    val uiState: KanghwiUiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState: UiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     when (uiState) {
-        is KanghwiUiState.Success -> {
-            PokeList(list = (uiState as KanghwiUiState.Success).pokemonList)
+        is UiState.Success -> {
+            PokeList(list = (uiState as UiState.Success).pokemonList)
         }
-        is KanghwiUiState.Error -> {
+        is UiState.Error -> {
             PokemonError {
-                viewModel.getPokeList()
+                viewModel.retry()
             }
         }
-        KanghwiUiState.Loading -> {
+        UiState.Loading -> {
             PokemonCircleProgressBar()
         }
     }
