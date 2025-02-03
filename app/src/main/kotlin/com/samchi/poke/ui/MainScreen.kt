@@ -40,7 +40,7 @@ fun MainScreen() {
                         NavigationItem.JinKwang.route -> JinKwangRoute()
                         NavigationItem.JungWon.route -> Unit
                         NavigationItem.KangHwi.route -> KanghwiRoute()
-                        NavigationItem.SangHyeong.route -> Unit
+                        NavigationItem.SangHyeong.route -> SangHyeongRoute()
                         NavigationItem.WooSung.route -> WoosungRoute()
                     }
                 }
