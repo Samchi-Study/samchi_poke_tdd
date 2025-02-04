@@ -1,4 +1,4 @@
-package com.samchi.poke.presentation
+package com.samchi.poke.kanghwi.presentation
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow

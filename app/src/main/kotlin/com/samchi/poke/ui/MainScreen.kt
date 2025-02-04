@@ -11,7 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.samchi.feature.sanghyeong.navigator.SangHyeongRoute
 import com.samchi.poke.feature.jinkwang.JinKwangRoute
-import com.samchi.poke.presentation.KanghwiRoute
+import com.samchi.poke.kanghwi.presentation.KanghwiRoute
 
 
 @Composable
