@@ -26,11 +26,17 @@ internal class JinKwangViewModel @Inject constructor(
         loadPokemonList()
     }
 
-    private fun loadPokemonList() {
+    fun loadPokemonList() {
         (viewModelScope + Dispatchers.IO).launch {
             jinKwangRepository.getPockemonList(offset.value)
                 .onSuccess { pokemonList ->
-                    _uiState.update { JinKwangUiState.Success(pokemonList) }
+                    _uiState.update {
+                        when (it) {
+                            JinKwangUiState.Loading -> JinKwangUiState.Success(pokemonList)
+                            is JinKwangUiState.Success -> JinKwangUiState.Success(it.pokemonList + pokemonList)
+                        }
+                    }
+                    offset.update { it + pokemonList.count() }
                 }.onFailure {
                     it.printStackTrace()
                 }
