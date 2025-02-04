@@ -2,6 +2,7 @@ package com.samchi.poke.feature.jinkwang
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,6 +15,7 @@ import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,7 +38,8 @@ fun JinKwangRoute() {
 
     JinKwangScreen(
         uiState = uiState,
-        onLastItemVisible = viewModel::loadPokemonList
+        onLastItemVisible = viewModel::loadPokemonList,
+        retry = viewModel::loadPokemonList,
     )
 }
 
@@ -44,6 +47,7 @@ fun JinKwangRoute() {
 private fun JinKwangScreen(
     uiState: JinKwangUiState,
     onLastItemVisible: () -> Unit,
+    retry: () -> Unit,
 ) {
 
     val gridState = rememberLazyGridState()
@@ -71,8 +75,15 @@ private fun JinKwangScreen(
                 items(uiState.pokemonList) { pokemon ->
                     Pokemon(pokemon)
                 }
-                loading()
+                if (uiState.isEndOfPage.not() && uiState.isError.not()) {
+                    loading()
+                }
+                if (uiState.isError) {
+                    error(retry)
+                }
             }
+
+            is JinKwangUiState.Error -> error { }
         }
     }
 }
@@ -88,6 +99,29 @@ private fun LazyGridScope.loading() {
             contentAlignment = Alignment.Center
         ) {
             CircularProgressIndicator()
+        }
+
+    }
+}
+
+private fun LazyGridScope.error(
+    retry: () -> Unit,
+) {
+    item(
+        span = { GridItemSpan(maxLineSpan) }
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(text = "문제가 발생했습니다. 다시 시도해주세요.")
+            Spacer(modifier = Modifier.height(24.dp))
+            Button(
+                onClick = retry
+            ) {
+                Text("다시시도")
+            }
         }
 
     }

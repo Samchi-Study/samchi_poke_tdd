@@ -33,7 +33,9 @@ internal class JinKwangViewModel @Inject constructor(
                 .onSuccess { pokemonList ->
                     _uiState.update {
                         when (it) {
-                            JinKwangUiState.Loading -> JinKwangUiState.Success(pokemonList)
+                            is JinKwangUiState.Loading, is JinKwangUiState.Error ->
+                                JinKwangUiState.Success(pokemonList)
+
                             is JinKwangUiState.Success -> JinKwangUiState.Success(it.pokemonList + pokemonList)
                         }
                     }
@@ -42,10 +44,19 @@ internal class JinKwangViewModel @Inject constructor(
                     } else {
                         offset.update { it + pokemonList.count() }
                     }
-                }.onFailure {
-                    it.printStackTrace()
+                }.onFailure { throwable ->
+                    _uiState.update {
+                        when (it) {
+                            is JinKwangUiState.Error, JinKwangUiState.Loading -> JinKwangUiState.Error(throwable)
+                            is JinKwangUiState.Success -> it.copy(isError = true)
+                        }
+                    }
                 }
         }
+    }
+
+    fun retry() {
+        loadPokemonList()
     }
 
     companion object {
