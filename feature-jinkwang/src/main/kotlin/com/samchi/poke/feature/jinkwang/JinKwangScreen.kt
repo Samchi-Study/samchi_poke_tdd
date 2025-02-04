@@ -83,7 +83,7 @@ private fun JinKwangScreen(
                 }
             }
 
-            is JinKwangUiState.Error -> error { }
+            is JinKwangUiState.Error -> error(retry)
         }
     }
 }
