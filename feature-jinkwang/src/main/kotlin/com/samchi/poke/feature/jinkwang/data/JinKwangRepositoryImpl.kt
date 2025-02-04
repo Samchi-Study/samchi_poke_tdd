@@ -9,7 +9,9 @@ internal class JinKwangRepositoryImpl @Inject constructor(
 ) : JinKwangRepository {
 
     override suspend fun getPockemonList(offset: Int): Result<List<Pokemon>> = runCatching {
-        pokeApi.getPokemonList(offset).results.map {
+        pokeApi.getPokemonList(
+            offset = offset
+        ).results.map {
             it.toPokemon()
         }
     }
