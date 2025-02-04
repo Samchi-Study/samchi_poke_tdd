@@ -29,38 +29,40 @@ internal class JinKwangViewModel @Inject constructor(
     fun loadPokemonList() {
         if (offset.value == END_OF_OFFSET) return
         (viewModelScope + Dispatchers.IO).launch {
-            jinKwangRepository.getPockemonList(offset.value)
-                .onSuccess { pokemonList ->
-                    _uiState.update {
-                        when (it) {
-                            is JinKwangUiState.Loading, is JinKwangUiState.Error ->
-                                JinKwangUiState.Success(pokemonList)
+            jinKwangRepository.getPockemonList(
+                limit = LIMIT_OF_POKEMON_PER_PAGE,
+                offset = offset.value
+            ).onSuccess { pokemonList ->
+                _uiState.update {
+                    when (it) {
+                        is JinKwangUiState.Loading, is JinKwangUiState.Error ->
+                            JinKwangUiState.Success(pokemonList)
 
-                            is JinKwangUiState.Success -> JinKwangUiState.Success(it.pokemonList + pokemonList)
-                        }
-                    }
-                    if (pokemonList.isEmpty()) {
-                        offset.update { END_OF_OFFSET }
-                    } else {
-                        offset.update { it + pokemonList.count() }
-                    }
-                }.onFailure { throwable ->
-                    _uiState.update {
-                        when (it) {
-                            is JinKwangUiState.Error, JinKwangUiState.Loading -> JinKwangUiState.Error(throwable)
-                            is JinKwangUiState.Success -> it.copy(isError = true)
-                        }
+                        is JinKwangUiState.Success -> JinKwangUiState.Success(it.pokemonList + pokemonList)
                     }
                 }
-        }
-    }
+                if (pokemonList.isEmpty()) {
+                    offset.update { END_OF_OFFSET }
+                } else {
+                    offset.update { it + pokemonList.count() }
+                }
+            }.onFailure { throwable ->
+                _uiState.update {
+                    when (it) {
+                        is JinKwangUiState.Error, JinKwangUiState.Loading -> JinKwangUiState.Error(
+                            throwable
+                        )
 
-    fun retry() {
-        loadPokemonList()
+                        is JinKwangUiState.Success -> it.copy(isError = true)
+                    }
+                }
+            }
+        }
     }
 
     companion object {
         private const val END_OF_OFFSET = -1
         private const val INIT_OFFSET = 0
+        private const val LIMIT_OF_POKEMON_PER_PAGE = 20
     }
 }
