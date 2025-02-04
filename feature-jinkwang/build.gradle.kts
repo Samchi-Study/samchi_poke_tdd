@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.samchi.poke.feature)
+    alias(libs.plugins.samchi.poke.hilt)
     alias(libs.plugins.compose.compiler)
 }
 
@@ -12,6 +13,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.coil.compose)
     implementation(libs.retrofit.core)
     implementation(libs.retrofit.kotlin.serialization)
     implementation(project(":network"))
