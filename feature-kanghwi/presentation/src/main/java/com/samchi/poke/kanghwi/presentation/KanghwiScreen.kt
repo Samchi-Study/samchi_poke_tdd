@@ -36,7 +36,7 @@ fun KanghwiRoute(
 }
 
 @Composable
-internal fun KanghwiScreen(
+private fun KanghwiScreen(
     modifier: Modifier = Modifier,
     viewModel: KanghwiViewModel = hiltViewModel()
 ) {
@@ -58,7 +58,7 @@ internal fun KanghwiScreen(
 }
 
 @Composable
-internal fun PokeList(
+private fun PokeList(
     modifier: Modifier = Modifier,
     list: List<Pokemon>
 ) {
@@ -89,7 +89,7 @@ internal fun PokeList(
 }
 
 @Composable
-internal fun PokemonError(
+private fun PokemonError(
     onRetryEvent: () -> Unit
 ) {
     Box(
@@ -108,7 +108,7 @@ internal fun PokemonError(
 }
 
 @Composable
-internal fun PokemonCircleProgressBar() {
+private fun PokemonCircleProgressBar() {
     Box(
         modifier = Modifier
             .background(Color.Transparent)
@@ -125,7 +125,7 @@ internal fun PokemonCircleProgressBar() {
 
 @Composable
 @Preview
-internal fun PreviewPokeList() {
+private fun PreviewPokeList() {
     PokeList(
         list = listOf(
             Pokemon("피카츄", "https://pokeapi.co/api/v2/pokemon/2/"),
@@ -138,6 +138,6 @@ internal fun PreviewPokeList() {
 
 @Composable
 @Preview
-internal fun PreviewError() {
+private fun PreviewError() {
     PokemonError({})
 }
