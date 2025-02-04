@@ -4,12 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.samchi.feature.jungwon.data.model.PokemonPage
 import com.samchi.feature.jungwon.data.repository.PokemonRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import dagger.hilt.android.lifecycle.HiltViewModel
 
 @HiltViewModel
 class PokemonListViewModel @Inject constructor(
@@ -23,7 +24,7 @@ class PokemonListViewModel @Inject constructor(
 
     fun loadFirstPage() {
         viewModelScope.launch {
-            _uiState.emit(PokemonListUiState.Loading)
+            _uiState.update { PokemonListUiState.Loading }
             pokemonRepository.getPokemonPage()
                 .handleUiState()
         }
