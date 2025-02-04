@@ -2,6 +2,7 @@ package com.samchi.poke.feature.jinkwang
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -83,7 +84,8 @@ private fun LazyGridScope.loading() {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(56.dp)
+                .height(56.dp),
+            contentAlignment = Alignment.Center
         ) {
             CircularProgressIndicator()
         }
@@ -102,7 +104,9 @@ private fun Pokemon(
         AsyncImage(
             model = pokemon.imageUrl,
             contentDescription = null,
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier
+                .aspectRatio(1f)
+                .padding(16.dp)
         )
         Text(text = pokemon.name)
     }
