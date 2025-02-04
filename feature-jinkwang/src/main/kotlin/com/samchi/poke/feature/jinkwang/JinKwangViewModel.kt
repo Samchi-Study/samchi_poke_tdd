@@ -21,6 +21,7 @@ internal class JinKwangViewModel @Inject constructor(
     val uiState = _uiState.asStateFlow()
 
     private val offset = MutableStateFlow(INIT_OFFSET)
+    private val isLoadingPokemonList = MutableStateFlow(false)
 
     init {
         loadPokemonList()
@@ -28,7 +29,9 @@ internal class JinKwangViewModel @Inject constructor(
 
     fun loadPokemonList() {
         if (offset.value == END_OF_OFFSET) return
+        if (isLoadingPokemonList.value) return
         (viewModelScope + Dispatchers.IO).launch {
+            isLoadingPokemonList.update { true }
             jinKwangRepository.getPockemonList(
                 limit = LIMIT_OF_POKEMON_PER_PAGE,
                 offset = offset.value
@@ -46,6 +49,7 @@ internal class JinKwangViewModel @Inject constructor(
                 } else {
                     offset.update { it + pokemonList.count() }
                 }
+                isLoadingPokemonList.update { false }
             }.onFailure { throwable ->
                 _uiState.update {
                     when (it) {
@@ -58,6 +62,11 @@ internal class JinKwangViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun retry() {
+        isLoadingPokemonList.update { false }
+        loadPokemonList()
     }
 
     companion object {

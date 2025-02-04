@@ -39,7 +39,7 @@ fun JinKwangRoute() {
     JinKwangScreen(
         uiState = uiState,
         onLastItemVisible = viewModel::loadPokemonList,
-        retry = viewModel::loadPokemonList,
+        retry = viewModel::retry,
     )
 }
 
