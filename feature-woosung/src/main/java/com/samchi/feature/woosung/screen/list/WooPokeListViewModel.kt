@@ -32,7 +32,6 @@ class WooPokeListViewModel @Inject constructor(
             _wooPokeUiState.value = WooPokeUiState.Success(pokeList = it)
         }.onFailure {
             _wooPokeUiState.value = WooPokeUiState.Error(throwable = it.cause)
-
         }
     }
 
