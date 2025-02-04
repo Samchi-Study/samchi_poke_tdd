@@ -35,28 +35,18 @@ fun PokemonListScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(Unit) {
-        viewModel.loadFirstPage()
-    }
-
     when (uiState) {
-        is PokemonListUiState.Loading -> {
-            LoadingIndicator()
-        }
-        is PokemonListUiState.Success -> {
-            PokemonGrid(pokemonList = (uiState as PokemonListUiState.Success).data.dataList)
-        }
-        is PokemonListUiState.Error -> {
-            ErrorMessage(message = (uiState as PokemonListUiState.Error).message)
-        }
-        else -> {
-            // 초기 상태
+        is PokemonListUiState.Loading -> LoadingIndicator()
+        is PokemonListUiState.Success -> PokemonGrid(pokemonList = (uiState as PokemonListUiState.Success).data.dataList)
+        is PokemonListUiState.Error -> ErrorMessage(message = (uiState as PokemonListUiState.Error).message)
+        is PokemonListUiState.Initial -> {
+            // do nothing
         }
     }
 }
 
 @Composable
-fun LoadingIndicator() {
+private fun LoadingIndicator() {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -66,7 +56,7 @@ fun LoadingIndicator() {
 }
 
 @Composable
-fun ErrorMessage(message: String) {
+private fun ErrorMessage(message: String) {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -76,7 +66,7 @@ fun ErrorMessage(message: String) {
 }
 
 @Composable
-fun PokemonGrid(pokemonList: List<Pokemon>) {
+private fun PokemonGrid(pokemonList: List<Pokemon>) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2), // 2열 그리드
         modifier = Modifier.padding(8.dp)
@@ -88,7 +78,7 @@ fun PokemonGrid(pokemonList: List<Pokemon>) {
 }
 
 @Composable
-fun PokemonCard(pokemon: Pokemon) {
+private fun PokemonCard(pokemon: Pokemon) {
     Card(
         modifier = Modifier
             .padding(8.dp)
