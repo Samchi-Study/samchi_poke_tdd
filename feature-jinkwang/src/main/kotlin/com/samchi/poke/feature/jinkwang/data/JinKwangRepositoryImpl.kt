@@ -18,7 +18,7 @@ internal class JinKwangRepositoryImpl @Inject constructor(
 
     private fun ResponsePokemon.toPokemon(): Pokemon {
         return Pokemon(
-            name = name,
+            nameField = name,
             url = url
         )
     }
