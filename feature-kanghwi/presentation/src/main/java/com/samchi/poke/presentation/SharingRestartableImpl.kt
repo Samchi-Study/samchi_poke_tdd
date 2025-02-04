@@ -8,12 +8,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.merge
 
 
-interface SharingRestartable : SharingStarted {
+internal interface SharingRestartable : SharingStarted {
     fun restart()
 }
 
 
-class SharingRestartableImpl(
+internal class SharingRestartableImpl(
     private val sharingStarted: SharingStarted
 ) : SharingRestartable {
 

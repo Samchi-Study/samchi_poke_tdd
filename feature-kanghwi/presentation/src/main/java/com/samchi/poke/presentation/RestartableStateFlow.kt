@@ -7,12 +7,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 
 
-interface RestartableStateFlow<T> : StateFlow<T> {
+internal interface RestartableStateFlow<T> : StateFlow<T> {
     fun restart()
 }
 
 
-fun <T> Flow<T>.restartableStateIn(
+internal fun <T> Flow<T>.restartableStateIn(
     scope: CoroutineScope,
     sharingStarted: SharingStarted,
     initialValue: T
