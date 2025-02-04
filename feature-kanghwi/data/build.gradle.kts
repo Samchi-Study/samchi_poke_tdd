@@ -16,4 +16,6 @@ dependencies {
     implementation(project(":network"))
 
     implementation(libs.androidx.core.ktx)
+    testImplementation(libs.test.mockk.android)
+    testImplementation(libs.test.mockk.coroutine.core)
 }
