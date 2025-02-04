@@ -12,7 +12,7 @@ import com.samchi.feature.woosung.screen.list.PokemonTest
 import com.samchi.poke.model.Pokemon
 
 @Composable
-fun PokeItem(modifier: Modifier = Modifier, pokemon: Pokemon) {
+internal fun PokeItem(modifier: Modifier = Modifier, pokemon: Pokemon) {
     Card() {
         Column {
             AsyncImage(

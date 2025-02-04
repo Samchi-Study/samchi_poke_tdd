@@ -35,7 +35,7 @@ fun WoosungRoute(
 }
 
 @Composable
-fun WooPokeListScreen(
+internal fun WooPokeListScreen(
     uiState: WooPokeUiState,
     onRetryClicked: () -> Unit = {}
 ) {

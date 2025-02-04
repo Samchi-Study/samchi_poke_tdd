@@ -4,7 +4,7 @@ import com.samchi.poke.network.PokeApi
 import javax.inject.Inject
 
 
-class PokeRemoteDataSource @Inject constructor(
+internal class WoosungPokeRemoteDataSourceImp @Inject constructor(
     private val pokeApi : PokeApi
 ){
 
