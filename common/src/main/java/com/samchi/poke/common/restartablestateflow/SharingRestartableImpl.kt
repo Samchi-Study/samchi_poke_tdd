@@ -1,4 +1,4 @@
-package com.samchi.poke.kanghwi.presentation
+package com.samchi.poke.common.restartablestateflow
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
