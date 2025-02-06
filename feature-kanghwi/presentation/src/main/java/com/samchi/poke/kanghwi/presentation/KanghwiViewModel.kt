@@ -29,7 +29,7 @@ internal class KanghwiViewModel @Inject constructor(
                 is Result.Error -> UiState.Error(result.throwable)
                 Result.Loading -> UiState.Loading
             }
-        }
+        }   
         .restartableStateIn(
             scope = viewModelScope,
             sharingStarted = SharingStarted.WhileSubscribed(5_000),

@@ -32,23 +32,30 @@ import com.samchi.poke.model.Pokemon
 fun KanghwiRoute(
     modifier: Modifier = Modifier
 ) {
-    KanghwiScreen()
+    val viewModel: KanghwiViewModel = hiltViewModel()
+
+    val uiState: UiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    KanghwiScreen(
+        uiState = uiState,
+        onRetryEvent = { viewModel.retry() }
+    )
 }
 
 @Composable
 private fun KanghwiScreen(
     modifier: Modifier = Modifier,
-    viewModel: KanghwiViewModel = hiltViewModel()
+    uiState: UiState,
+    onRetryEvent: () -> Unit
 ) {
-    val uiState: UiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     when (uiState) {
         is UiState.Success -> {
-            PokeList(list = (uiState as UiState.Success).pokemonList)
+            PokeList(list = uiState.pokemonList)
         }
         is UiState.Error -> {
             PokemonError {
-                viewModel.retry()
+                onRetryEvent()
             }
         }
         UiState.Loading -> {
@@ -67,7 +74,7 @@ private fun PokeList(
             Column {
                 Row(
                     modifier = Modifier
-                        .padding(start = 12.dp, top = 6.dp, end = 12.dp, bottom = 6.dp)
+                        .padding(vertical = 6.dp, horizontal = 12.dp)
                 ) {
                     AsyncImage(
                         model = item.getImageUrl(),
