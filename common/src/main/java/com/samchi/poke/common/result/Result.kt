@@ -1,4 +1,4 @@
-package com.samchi.poke.kanghwi.common.result
+package com.samchi.poke.common.result
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
