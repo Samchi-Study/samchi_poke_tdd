@@ -20,7 +20,7 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
             extensions.configure<LibraryExtension> {
                 configureKotlinAndroid(this)
                 configureAndroidCompose(this)
-                defaultConfig.targetSdk = 34
+                defaultConfig.targetSdk = 35
             }
 
             dependencies {
@@ -30,6 +30,8 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
                 add("implementation", libs.findLibrary("androidx-core-ktx").get())
                 add("implementation", libs.findLibrary("androidx-appcompat").get())
                 add("implementation", libs.findLibrary("material").get())
+                add("implementation", libs.findLibrary("coil-compose").get())
+                add("implementation", libs.findLibrary("coil-network").get())
 
                 //test
                 add("testImplementation", libs.findLibrary("junit").get())
