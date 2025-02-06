@@ -5,6 +5,7 @@ import com.samchi.poke.model.PokemonInfo
 import com.samchi.poke.network.PokeApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 
@@ -14,7 +15,8 @@ internal class KanghwiRepositoryImpl @Inject constructor(
 
     override fun getPokemonInfo(limit: Int, offset: Int): Flow<PokemonInfo> = flow {
         emit(
-            pokeApi.getPokemonList(limit, offset).toModel()
+            pokeApi.getPokemonList(limit, offset)
         )
     }
+        .map { it.toModel() }
 }

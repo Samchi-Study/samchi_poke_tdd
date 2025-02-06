@@ -1,4 +1,4 @@
-package com.samchi.poke.presentation
+package com.samchi.poke.kanghwi.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -6,12 +6,8 @@ import com.samchi.poke.kanghwi.common.result.Result
 import com.samchi.poke.kanghwi.common.result.asResult
 import com.samchi.poke.kanghwi.data.KanghwiRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 
@@ -20,29 +16,26 @@ internal class KanghwiViewModel @Inject constructor(
     private val kanghwiRepository: KanghwiRepository
 ) : ViewModel() {
 
-    private val paginationFlow = MutableStateFlow(1)
+    private var page = 0
 
-    val uiState = paginationFlow
-        .flatMapConcat { kanghwiRepository.getPokemonInfo(offset = it) }
+    val uiState = kanghwiRepository.getPokemonInfo(offset = page)
         .asResult()
         .map { result ->
             when (result) {
-                is Result.Success -> KanghwiUiState.Success(
+                is Result.Success -> UiState.Success(
                     totalCount = result.data.count,
                     pokemonList = result.data.results
                 )
-                is Result.Error -> KanghwiUiState.Error(result.throwable)
-                Result.Loading -> KanghwiUiState.Loading
+                is Result.Error -> UiState.Error(result.throwable)
+                Result.Loading -> UiState.Loading
             }
-        }
-        .stateIn(
+        }   
+        .restartableStateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = KanghwiUiState.Loading
+            sharingStarted = SharingStarted.WhileSubscribed(5_000),
+            initialValue = UiState.Loading
         )
 
 
-    fun next() {
-        paginationFlow.update { it + 1 }
-    }
+    fun retry() = uiState.restart()
 }

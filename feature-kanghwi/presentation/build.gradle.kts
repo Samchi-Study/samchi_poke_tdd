@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.samchi.poke.presentation"
+    namespace = "com.samchi.poke.kanghwi.presentation"
 
     hilt {
         enableAggregatingTask = true
