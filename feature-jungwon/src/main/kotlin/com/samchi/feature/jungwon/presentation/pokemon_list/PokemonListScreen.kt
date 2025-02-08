@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -37,8 +38,15 @@ fun PokemonListScreen(
 
     when (uiState) {
         is PokemonListUiState.Loading -> LoadingIndicator()
-        is PokemonListUiState.Success -> PokemonGrid(pokemonList = (uiState as PokemonListUiState.Success).data.dataList)
-        is PokemonListUiState.Error -> ErrorMessage(message = (uiState as PokemonListUiState.Error).message)
+        is PokemonListUiState.Success -> PokemonGrid(
+            pokemonList = (uiState as PokemonListUiState.Success).data.dataList,
+            onLoadNextPage = { viewModel.loadNextPage() }
+        )
+
+        is PokemonListUiState.Error -> ErrorMessage(
+            message = (uiState as PokemonListUiState.Error).message
+        )
+
         is PokemonListUiState.Initial -> {
             // do nothing
         }
@@ -66,14 +74,21 @@ private fun ErrorMessage(message: String) {
 }
 
 @Composable
-private fun PokemonGrid(pokemonList: List<Pokemon>) {
+private fun PokemonGrid(pokemonList: List<Pokemon>, onLoadNextPage: () -> Unit) {
+    val listState = rememberLazyGridState()
+
     LazyVerticalGrid(
         columns = GridCells.Fixed(2), // 2열 그리드
+        state = listState,
         modifier = Modifier.padding(8.dp)
     ) {
         items(pokemonList) { pokemon ->
             PokemonCard(pokemon)
         }
+    }
+
+    if (listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index == pokemonList.size - 1) {
+        onLoadNextPage()
     }
 }
 
@@ -139,7 +154,7 @@ fun PokemonListScreenPreview() {
         Pokemon(name = "nidoran-f", url = "https://pokeapi.co/api/v2/pokemon/29/"),
         Pokemon(name = "nidorina", url = "https://pokeapi.co/api/v2/pokemon/30/")
     )
-    
+
     // Mock UI State
     val uiState = PokemonListUiState.Success(
         data = PokemonPage(
@@ -150,5 +165,5 @@ fun PokemonListScreenPreview() {
     )
 
     // Preview UI
-    PokemonGrid(pokemonList = mockPokemonList)
+    PokemonGrid(pokemonList = mockPokemonList, onLoadNextPage = {})
 } 

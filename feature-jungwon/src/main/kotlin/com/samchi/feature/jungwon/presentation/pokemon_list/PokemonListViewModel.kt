@@ -19,8 +19,7 @@ class PokemonListViewModel @Inject constructor(
     private val _uiState: MutableStateFlow<PokemonListUiState> =
         MutableStateFlow(PokemonListUiState.Initial)
 
-    val uiState: StateFlow<PokemonListUiState>
-        get() = _uiState.asStateFlow()
+    val uiState: StateFlow<PokemonListUiState> = _uiState.asStateFlow()
 
     init {
         loadFirstPage()
@@ -35,13 +34,24 @@ class PokemonListViewModel @Inject constructor(
 
     fun loadNextPage() {
         viewModelScope.launch {
-            if (_uiState.value !is PokemonListUiState.Success) return@launch
+            val currentState = uiState.value
+            if (currentState is PokemonListUiState.Success) {
+                val currentList = currentState.data.dataList
+                val nextOffset: Int = currentState.data.nextOffset ?: return@launch
+                val result: Result<PokemonPage> = pokemonRepository.getPokemonPage(offset = nextOffset)
 
-            val currentPage = (_uiState.value as PokemonListUiState.Success).data
-            val nextPageOffSet: Int = currentPage.nextOffset ?: return@launch
-
-            pokemonRepository.getPokemonPage(offset = nextPageOffSet)
-                .handleUiState()
+                if (result.isSuccess) {
+                    val newPage = result.getOrNull()
+                    if (newPage != null) {
+                        val updatedList = currentList + newPage.dataList
+                        _uiState.update {
+                            PokemonListUiState.Success(data = newPage.copy(dataList = updatedList))
+                        }
+                    }
+                } else {
+                    _uiState.value = PokemonListUiState.Error("Failed to load next page")
+                }
+            }
         }
     }
 
