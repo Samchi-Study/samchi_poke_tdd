@@ -22,6 +22,10 @@ class PokemonListViewModel @Inject constructor(
     val uiState: StateFlow<PokemonListUiState>
         get() = _uiState.asStateFlow()
 
+    init {
+        loadFirstPage()
+    }
+
     fun loadFirstPage() {
         viewModelScope.launch {
             _uiState.update { PokemonListUiState.Loading }
