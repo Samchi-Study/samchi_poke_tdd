@@ -117,8 +117,6 @@ class PokemonListViewModelTest {
 
         viewModel = PokemonListViewModel(repository)
 
-        viewModel = PokemonListViewModel(repository)
-
         // When
         testDispatcher.scheduler.advanceUntilIdle()
 
