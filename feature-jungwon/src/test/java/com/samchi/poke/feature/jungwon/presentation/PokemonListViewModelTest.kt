@@ -2,8 +2,8 @@ package com.samchi.poke.feature.jungwon.presentation
 
 import com.samchi.feature.jungwon.data.model.PokemonPage
 import com.samchi.feature.jungwon.data.repository.PokemonRepository
-import com.samchi.feature.jungwon.presentation.list.PokemonListUiState
-import com.samchi.feature.jungwon.presentation.list.PokemonListViewModel
+import com.samchi.feature.jungwon.presentation.pokemon_list.PokemonListUiState
+import com.samchi.feature.jungwon.presentation.pokemon_list.PokemonListViewModel
 import com.samchi.poke.model.Pokemon
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -114,6 +114,8 @@ class PokemonListViewModelTest {
             nextUrl = secondPage.nextUrl,
             dataList = firstPage.dataList + secondPage.dataList
         )
+
+        viewModel = PokemonListViewModel(repository)
 
         viewModel = PokemonListViewModel(repository)
 
