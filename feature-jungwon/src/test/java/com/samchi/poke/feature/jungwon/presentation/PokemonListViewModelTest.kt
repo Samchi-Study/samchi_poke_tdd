@@ -4,6 +4,7 @@ import com.samchi.feature.jungwon.data.model.PokemonPage
 import com.samchi.feature.jungwon.data.repository.PokemonRepository
 import com.samchi.feature.jungwon.presentation.pokemon_list.PokemonListUiState
 import com.samchi.feature.jungwon.presentation.pokemon_list.PokemonListViewModel
+import com.samchi.poke.model.Pokemon
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -97,21 +98,22 @@ class PokemonListViewModelTest {
     }
 
     @Test
-    fun `다음 페이지 요청시 offset이 증가해야 한다`() = runTest {
+    fun `다음 페이지 요청시 offset이 증가해야 하고 page 정보가 추가되어야 한다`() = runTest {
         // Given
-        val firstPage = mockk<PokemonPage> {
-            every { nextUrl } returns "https://pokeapi.co/api/v2/pokemon?offset=0&limit=20"
-            every { nextOffset } returns 20
-        }
-        val secondPage = mockk<PokemonPage> {
-            every { nextUrl } returns "https://pokeapi.co/api/v2/pokemon?offset=20&limit=20"
-            every { nextOffset } returns 40
-        }
+        val firstPage = getMockPokemonFirstPage()
+        val secondPage = getMockPokemonSecondPage()
 
         // 첫 페이지 요청에 대한 mock
         coEvery { repository.getPokemonPage(offset = 0) } returns Result.success(firstPage)
         // 다음 페이지 요청에 대한 mock
         coEvery { repository.getPokemonPage(offset = 20) } returns Result.success(secondPage)
+        // copy 메서드 모킹
+        every { firstPage.copy(any(), any(), any()) } returns firstPage
+        every { secondPage.copy(any(), any(), any()) } returns PokemonPage(
+            previousUrl = secondPage.previousUrl,
+            nextUrl = secondPage.nextUrl,
+            dataList = firstPage.dataList + secondPage.dataList
+        )
 
         viewModel = PokemonListViewModel(repository)
 
@@ -122,30 +124,58 @@ class PokemonListViewModelTest {
         testDispatcher.scheduler.advanceUntilIdle()
 
         // Then
+        val expectedList = getExpectPokemonList()
+
         assertTrue(viewModel.uiState.value is PokemonListUiState.Success)
+        assertEquals(expectedList, (viewModel.uiState.value as PokemonListUiState.Success).data.dataList)
+
         coVerify(exactly = 1) { repository.getPokemonPage(offset = 0) }
         coVerify(exactly = 1) { repository.getPokemonPage(offset = 20) }
+    }
+
+    private fun getExpectPokemonList() = listOf(
+        Pokemon(name = "bulbasaur", url = "https://pokeapi.co/api/v2/pokemon/1/"),
+        Pokemon(name = "ivysaur", url = "https://pokeapi.co/api/v2/pokemon/2/"),
+        Pokemon(name = "venusaur", url = "https://pokeapi.co/api/v2/pokemon/3/"),
+        Pokemon(name = "charmander", url = "https://pokeapi.co/api/v2/pokemon/4/")
+    )
+
+    private fun getMockPokemonSecondPage() = mockk<PokemonPage> {
+        every { dataList } returns listOf(
+            Pokemon(name = "venusaur", url = "https://pokeapi.co/api/v2/pokemon/3/"),
+            Pokemon(name = "charmander", url = "https://pokeapi.co/api/v2/pokemon/4/")
+        )
+        every { previousUrl } returns "https://pokeapi.co/api/v2/pokemon?offset=0&limit=20"
+        every { previousOffset } returns 0
+        every { nextUrl } returns "https://pokeapi.co/api/v2/pokemon?offset=40&limit=20"
+        every { nextOffset } returns 40
+    }
+
+    private fun getMockPokemonFirstPage() = mockk<PokemonPage> {
+        every { dataList } returns listOf(
+            Pokemon(name = "bulbasaur", url = "https://pokeapi.co/api/v2/pokemon/1/"),
+            Pokemon(name = "ivysaur", url = "https://pokeapi.co/api/v2/pokemon/2/")
+        )
+        every { previousUrl } returns null
+        every { previousOffset } returns null
+        every { nextUrl } returns "https://pokeapi.co/api/v2/pokemon?offset=20&limit=20"
+        every { nextOffset } returns 20
     }
 
     @Test
     fun `새로고침 요청시 offset이 0으로 초기화되어야 한다`() = runTest {
         // Given
-        val firstPage = mockk<PokemonPage> {
-            every { nextUrl } returns "https://pokeapi.co/api/v2/pokemon?offset=20&limit=20"
-            every { nextOffset } returns 20
-        }
-        val secondPage = mockk<PokemonPage> {
-            every { nextUrl } returns "https://pokeapi.co/api/v2/pokemon?offset=40&limit=20"
-            every { nextOffset } returns 40
-        }
-        val refreshedPage = mockk<PokemonPage> {
-            every { nextUrl } returns "https://pokeapi.co/api/v2/pokemon?offset=20&limit=20"
-            every { nextOffset } returns 20
-        }
+        val firstPage = getMockPokemonFirstPage()
+        val secondPage = getMockPokemonSecondPage()
+        val refreshedPage = getMockPokemonFirstPage()
 
         // 첫 페이지와 두 번째 페이지 요청에 대한 mock
         coEvery { repository.getPokemonPage(offset = 0) } returns Result.success(firstPage)
         coEvery { repository.getPokemonPage(offset = 20) } returns Result.success(secondPage)
+
+        // copy 메서드 모킹
+        every { firstPage.copy(any(), any(), any()) } returns firstPage
+        every { secondPage.copy(any(), any(), any()) } returns secondPage
 
         // 새로고침 요청에 대한 mock
         coEvery { repository.getPokemonPage(offset = 0) } returns Result.success(refreshedPage)
