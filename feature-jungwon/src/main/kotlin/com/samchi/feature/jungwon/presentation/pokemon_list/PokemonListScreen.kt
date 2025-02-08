@@ -1,4 +1,4 @@
-package com.samchi.feature.jungwon.presentation
+package com.samchi.feature.jungwon.presentation.pokemon_list
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,6 +30,7 @@ import com.samchi.poke.model.Pokemon
 
 @Composable
 fun PokemonListScreen(
+    modifier: Modifier,
     viewModel: PokemonListViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -140,7 +141,13 @@ fun PokemonListScreenPreview() {
     )
     
     // Mock UI State
-    val uiState = PokemonListUiState.Success(data = PokemonPage(nextUrl = null, previousUrl = null, mockPokemonList))
+    val uiState = PokemonListUiState.Success(
+        data = PokemonPage(
+            nextUrl = null,
+            previousUrl = null,
+            mockPokemonList
+        )
+    )
 
     // Preview UI
     PokemonGrid(pokemonList = mockPokemonList)

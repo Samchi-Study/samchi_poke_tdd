@@ -1,4 +1,4 @@
-package com.samchi.feature.jungwon.presentation
+package com.samchi.feature.jungwon.presentation.pokemon_list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -26,10 +26,9 @@ class PokemonListViewModel @Inject constructor(
         loadFirstPage()
     }
 
-    fun loadFirstPage() {
+    private fun loadFirstPage() {
         viewModelScope.launch {
-            _uiState.update { PokemonListUiState.Loading }
-            pokemonRepository.getPokemonPage()
+            pokemonRepository.getPokemonPage(20, 0)
                 .handleUiState()
         }
     }
