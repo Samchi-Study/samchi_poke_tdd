@@ -31,10 +31,14 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
                 add("implementation", libs.findLibrary("androidx-core-ktx").get())
                 add("implementation", libs.findLibrary("androidx-appcompat").get())
                 add("implementation", libs.findLibrary("material").get())
+                add("implementation", libs.findLibrary("coil-compose").get())
+                add("implementation", libs.findLibrary("coil-network").get())
 
                 //test
                 add("testImplementation", libs.findLibrary("junit").get())
                 add("testImplementation", libs.findLibrary("test-mockk").get())
+                add("testImplementation", libs.findLibrary("test-mockk-android").get())
+                add("testImplementation", libs.findLibrary("test-mockk-coroutine-core").get())
                 add("testImplementation", libs.findLibrary("test-core-ktx").get())
                 add("testImplementation", libs.findLibrary("test-ext-junit-ktx").get())
                 add("testImplementation", libs.findLibrary("test-robolectric").get())
