@@ -4,12 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.samchi.poke.feature.jinkwang.data.JinKwangRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.plus
 import javax.inject.Inject
 
 @HiltViewModel
@@ -30,7 +28,7 @@ internal class JinKwangViewModel @Inject constructor(
     fun loadPokemonList() {
         if (offset.value == END_OF_OFFSET) return
         if (isLoadingPokemonList.value) return
-        (viewModelScope + Dispatchers.IO).launch {
+        viewModelScope.launch {
             isLoadingPokemonList.update { true }
             jinKwangRepository.getPockemonList(
                 limit = LIMIT_OF_POKEMON_PER_PAGE,
