@@ -12,6 +12,9 @@ android {
 }
 
 dependencies {
+    implementation(libs.coil.compose)
     implementation(libs.retrofit.core)
     implementation(libs.retrofit.kotlin.serialization)
+    implementation(project(":network"))
+    implementation(project(":model"))
 }
