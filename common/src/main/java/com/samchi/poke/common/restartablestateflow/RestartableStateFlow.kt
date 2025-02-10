@@ -1,4 +1,4 @@
-package com.samchi.poke.kanghwi.presentation
+package com.samchi.poke.common.restartablestateflow
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -7,12 +7,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 
 
-internal interface RestartableStateFlow<T> : StateFlow<T> {
+interface RestartableStateFlow<T> : StateFlow<T> {
+
     fun restart()
 }
 
 
-internal fun <T> Flow<T>.restartableStateIn(
+fun <T> Flow<T>.restartableStateIn(
     scope: CoroutineScope,
     sharingStarted: SharingStarted,
     initialValue: T
