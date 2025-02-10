@@ -1,6 +1,5 @@
 plugins {
     alias(libs.plugins.samchi.poke.feature)
-    alias(libs.plugins.samchi.poke.hilt)
     alias(libs.plugins.compose.compiler)
 }
 
