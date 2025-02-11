@@ -120,8 +120,6 @@ kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-pl
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
 room-gradlePlugin = { group = "androidx.room", name = "room-gradle-plugin", version.ref = "room" }
 
-coil-compose = {group = "io.coil-kt.coil3" , name = "coil-compose" ,version = "3.0.4"}
-coil-network = {group = "io.coil-kt.coil3" , name = "coil-network-okhttp", version = "3.0.4"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

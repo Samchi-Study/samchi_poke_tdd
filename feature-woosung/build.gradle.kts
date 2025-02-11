@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.samchi.poke.feature)
     alias(libs.plugins.compose.compiler)
+    kotlin("plugin.serialization")
 }
 
 android {
@@ -14,4 +15,6 @@ android {
 dependencies{
     implementation(libs.coil.compose)
     implementation(libs.coil.network)
+    implementation(libs.retrofit.kotlin.serialization)
+    implementation(libs.kotlinx.serialization.json)
 }

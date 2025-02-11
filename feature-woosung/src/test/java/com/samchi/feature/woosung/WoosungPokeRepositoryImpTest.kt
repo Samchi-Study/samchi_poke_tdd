@@ -13,7 +13,7 @@ class WoosungPokeRepositoryImpTest {
 
     @Before
     fun setUp() {
-         woosungPokeRepository = FakeWoosungPokeRepositoryImp()
+        woosungPokeRepository = FakeWoosungPokeRepositoryImp()
     }
 
     @Test
@@ -23,13 +23,5 @@ class WoosungPokeRepositoryImpTest {
         // Then
         assert(pokemon == fakePokemon)
     }
-
-
-    @Test
-    fun `haha`(){
-
-    }
-
-
 
 }
