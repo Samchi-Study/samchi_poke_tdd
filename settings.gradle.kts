@@ -22,14 +22,14 @@ dependencyResolutionManagement {
 
 rootProject.name = "SamchiPokeTdd"
 include(":app")
+include(":network")
+include(":model")
+include(":common")
 include(":feature-jungwon")
 include(":feature-jinkwang")
 include(":feature-kanghwi")
 include(":feature-woosung")
 include(":feature-sanghyeong")
 include(":feature-kanghwi")
-include(":network")
-include(":model")
 include(":feature-kanghwi:data")
 include(":feature-kanghwi:presentation")
-include(":feature-kanghwi:common")
