@@ -11,6 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.samchi.feature.jungwon.presentation.JungwonRoute
 import com.samchi.feature.sanghyeong.navigator.SangHyeongRoute
+import com.samchi.feature.woosung.screen.list.WoosungRoute
 import com.samchi.poke.feature.jinkwang.JinKwangRoute
 import com.samchi.poke.kanghwi.presentation.KanghwiRoute
 
@@ -41,7 +42,7 @@ fun MainScreen() {
                         NavigationItem.JungWon.route -> JungwonRoute()
                         NavigationItem.KangHwi.route -> KanghwiRoute()
                         NavigationItem.SangHyeong.route -> SangHyeongRoute()
-                        NavigationItem.WooSung.route -> Unit
+                        NavigationItem.WooSung.route -> WoosungRoute()
                     }
                 }
             }
