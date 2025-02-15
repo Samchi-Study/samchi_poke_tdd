@@ -1,11 +1,9 @@
 package com.samchi.poke.kanghwi.data
 
-import com.samchi.poke.kanghwi.toModel
-import com.samchi.poke.model.PokemonInfo
+import androidx.paging.PagingSource
+import com.samchi.poke.kanghwi.pagingsource.PokemonPagingSource
+import com.samchi.poke.model.Pokemon
 import com.samchi.poke.network.PokeApi
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 
@@ -13,10 +11,10 @@ internal class KanghwiRepositoryImpl @Inject constructor(
     private val pokeApi: PokeApi
 ) : KanghwiRepository {
 
-    override fun getPokemonInfo(limit: Int, offset: Int): Flow<PokemonInfo> = flow {
-        emit(
-            pokeApi.getPokemonList(limit, offset)
+    override fun getPokemonPagingSource(pageSize: Int): PagingSource<Int, Pokemon> =
+        PokemonPagingSource(
+            pageSize = pageSize,
+            onRequestPage = { page, size -> pokeApi.getPokemonList(size, page) }
         )
-    }
-        .map { it.toModel() }
+
 }

@@ -1,14 +1,13 @@
 package com.samchi.poke.kanghwi.data
 
-import com.samchi.poke.model.PokemonInfo
-import kotlinx.coroutines.flow.Flow
+import androidx.paging.PagingSource
+import com.samchi.poke.model.Pokemon
 
 
 interface KanghwiRepository {
 
-    fun getPokemonInfo(
-        limit: Int = 30,
-        offset: Int = 1
-    ): Flow<PokemonInfo>
+    fun getPokemonPagingSource(
+        pageSize: Int
+    ): PagingSource<Int, Pokemon>
 
 }
