@@ -24,8 +24,8 @@ class PokemonPagingSource(
                 page += params.loadSize / pageSize
             }
 
-            val previous = when (page) {
-                START_KEY -> null
+            val previous = when {
+                page == START_KEY || result.previous == null -> null
                 else -> page - 1
             }
 
