@@ -2,13 +2,11 @@ package com.samchi.poke.kanghwi.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.samchi.poke.common.restartablestateflow.restartableStateIn
-import com.samchi.poke.common.result.Result
-import com.samchi.poke.common.result.asResult
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.cachedIn
 import com.samchi.poke.kanghwi.data.KanghwiRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 
@@ -17,26 +15,16 @@ internal class KanghwiViewModel @Inject constructor(
     private val kanghwiRepository: KanghwiRepository
 ) : ViewModel() {
 
-    private var page = 0
+    private val pageSize = 100
 
-    val uiState = kanghwiRepository.getPokemonInfo(offset = page)
-        .asResult()
-        .map { result ->
-            when (result) {
-                is Result.Success -> UiState.Success(
-                    totalCount = result.data.count,
-                    pokemonList = result.data.results
-                )
-                is Result.Error -> UiState.Error(result.throwable)
-                Result.Loading -> UiState.Loading
-            }
-        }   
-        .restartableStateIn(
-            scope = viewModelScope,
-            sharingStarted = SharingStarted.WhileSubscribed(5_000),
-            initialValue = UiState.Loading
-        )
-
-
-    fun retry() = uiState.restart()
+    val pager = Pager(
+        config = PagingConfig(
+            pageSize = pageSize,
+            enablePlaceholders = true,
+            maxSize = pageSize * 4
+        ),
+        pagingSourceFactory = { kanghwiRepository.getPokemonPagingSource(pageSize) }
+    )
+        .flow
+        .cachedIn(viewModelScope)
 }
