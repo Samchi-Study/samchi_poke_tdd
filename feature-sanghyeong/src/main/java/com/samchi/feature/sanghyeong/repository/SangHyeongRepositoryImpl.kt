@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
-class SangHyeongRepositoryImpl @Inject constructor(
+internal class SangHyeongRepositoryImpl @Inject constructor(
     private val pokeApi: PokeApi
 ) : SangHyeongRepository {
     private var offset: String? = null

@@ -16,15 +16,17 @@ internal fun SangHyeongScreen(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center,
     ) {
-        if (uiState.loading) {
-            SangHyeongLoadingScreen()
-        } else {
-            if (uiState.error != null) {
+        when {
+            uiState.loading -> {
+                SangHyeongLoadingScreen()
+            }
+            uiState.error != null -> {
                 SangHyeongErrorScreen(
                     throwable = uiState.error,
                     onRetry = uiActions::onRetry,
                 )
-            } else {
+            }
+            else -> {
                 SangHyeongSuccessScreen(
                     pokemonList = uiState.pokemonList,
                     onBottomReached = uiActions::onLoadMore,
