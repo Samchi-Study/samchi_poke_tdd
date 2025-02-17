@@ -1,7 +1,9 @@
 package com.samchi.feature.woosung.data.repository
 
+import androidx.paging.PagingData
 import com.samchi.poke.model.Pokemon
+import kotlinx.coroutines.flow.Flow
 
 interface WoosungPokeRepository {
-    suspend fun getPokemonList(): List<Pokemon>
+     fun getPokemonList(): Flow<PagingData<Pokemon>>
 }
