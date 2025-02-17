@@ -8,11 +8,30 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 @Composable
-internal fun SangHyeongScreen(uiState: SangHyeongUiState) {
+internal fun SangHyeongScreen(
+    uiState: SangHyeongUiState,
+    uiActions: SangHyeongUiActions,
+) {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center,
     ) {
-        Text("SangHyeongScreen")
+        when {
+            uiState.loading -> {
+                SangHyeongLoadingScreen()
+            }
+            uiState.error != null -> {
+                SangHyeongErrorScreen(
+                    throwable = uiState.error,
+                    onRetry = uiActions::onRetry,
+                )
+            }
+            else -> {
+                SangHyeongSuccessScreen(
+                    pokemonList = uiState.pokemonList,
+                    onBottomReached = uiActions::onLoadMore,
+                )
+            }
+        }
     }
 }
