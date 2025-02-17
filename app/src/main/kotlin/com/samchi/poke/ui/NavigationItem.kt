@@ -7,5 +7,4 @@ enum class NavigationItem(
     JungWon("JungWon"),
     KangHwi("KangHwi"),
     SangHyeong("SangHyeong"),
-    WooSung("WooSung")
 }

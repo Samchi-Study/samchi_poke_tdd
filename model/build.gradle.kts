@@ -1,6 +1,9 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
+    kotlin("plugin.serialization")
+    id("kotlin-parcelize")
+
 }
 
 android {
@@ -18,4 +21,7 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
+}
+dependencies {
+    implementation(libs.kotlinx.serialization.json)
 }
