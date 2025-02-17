@@ -25,6 +25,7 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
 
             dependencies {
                 add("implementation", project(":model"))
+                add("implementation", project(":network"))
 
                 //androidx
                 add("implementation", libs.findLibrary("androidx-core-ktx").get())
