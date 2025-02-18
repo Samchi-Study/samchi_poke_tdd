@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
-internal class SangHyeongRepositoryImpl @Inject constructor(
+class SangHyeongRepositoryImpl @Inject constructor(
     private val pokeApi: PokeApi
 ) : SangHyeongRepository {
     private var offset: String? = null
@@ -18,7 +18,7 @@ internal class SangHyeongRepositoryImpl @Inject constructor(
             kotlin.runCatching {
                 pokeApi.getPokemonList(offset = 0)
             }.onSuccess { result ->
-                offset = getNextOffset(offset = result.next)
+                offset = getNextOffset(offset = result.next ?: "")
                 emit(Result.success(value = result.toPokemonInfo()))
             }.onFailure { throwable ->
                 emit(Result.failure(exception = throwable))
@@ -31,7 +31,7 @@ internal class SangHyeongRepositoryImpl @Inject constructor(
             kotlin.runCatching {
                 pokeApi.getPokemonList(offset = offset?.toInt() ?: 0)
             }.onSuccess { result ->
-                offset = getNextOffset(offset = result.next)
+                offset = getNextOffset(offset = result.next ?: "")
                 emit(Result.success(value = result.toPokemonInfo()))
             }.onFailure { throwable ->
                 emit(Result.failure(exception = throwable))
