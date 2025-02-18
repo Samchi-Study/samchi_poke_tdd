@@ -1,4 +1,4 @@
-package com.samchi.feature.jungwon.presentation.pokemon_list
+package com.samchi.feature.jungwon.presentation.list
 
 import com.samchi.feature.jungwon.data.model.PokemonPage
 
