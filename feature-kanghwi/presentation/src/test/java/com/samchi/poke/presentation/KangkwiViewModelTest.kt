@@ -28,22 +28,6 @@ class KangkwiViewModelTest {
 
     @Test
     fun `UiState가 Success인 경우`() = runTest {
-        coEvery {
-            kanghwiRepository.getPokemonInfo(any(), any())
-        } answers {
-            flow {
-                emit(
-                    PokemonInfo(
-                        count = 2,
-                        results = listOf(
-                            Pokemon("파이리", ""),
-                            Pokemon("이상해씨", ""),
-                        )
-                    )
-                )
-            }
-        }
-
         kanghwiViewModel = KanghwiViewModel(kanghwiRepository)
 
         val channel = Channel<UiState>()

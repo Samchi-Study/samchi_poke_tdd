@@ -81,18 +81,15 @@ class PagingSourceTest {
             )
         }
 
-        val source = PokemonPagingSource(
-            pageSize = pageSize,
-            onRequestPage = { page, size -> pokeApi.getPokemonList(size, page) }
-        )
+        val source = PokemonPagingSource(api = pokeApi)
 
         val pager = TestPager(config = config, pagingSource = source)
 
         val result = pager.refresh() as PagingSource.LoadResult.Page
 
         assertEquals(result.data.size, 6)
-        assertEquals(result.prevKey, 2)
-        assertEquals(result.nextKey, 4)
+        assertEquals(result.prevKey, null)
+        assertEquals(result.nextKey, 6)
 
         coVerify(exactly = 1) {
             pokeApi.getPokemonList(any(), any())
@@ -104,7 +101,7 @@ class PagingSourceTest {
     fun `append()로 다음 페이지를 불러온다`() = runTest {
         coEvery {
             pokeApi.getPokemonList(6, 0)
-        } answers {
+        } coAnswers {
             ResponsePokemonInfo(
                 count = 1000,
                 next = "https://pokeapi.co/api/v2/pokemon?offset=4&limit=1",
@@ -158,29 +155,118 @@ class PagingSourceTest {
             )
         }
 
-        val source = PokemonPagingSource(
-            pageSize = pageSize,
-            onRequestPage = { page, size -> pokeApi.getPokemonList(size, page) }
-        )
+        val source = PokemonPagingSource(api = pokeApi)
 
         val pager = TestPager(config = config, pagingSource = source)
 
         val p1 = pager.refresh() as PagingSource.LoadResult.Page
 
         assertEquals(p1.data.size, 6)
-        assertEquals(p1.prevKey, 2)
-        assertEquals(p1.nextKey, 4)
+        assertEquals(p1.prevKey, null)
+        assertEquals(p1.nextKey, 6)
 
         val p2 = pager.append() as PagingSource.LoadResult.Page
 
         assertEquals(p2.data.size, 2)
-        assertEquals(p2.prevKey, 3)
-        assertEquals(p2.nextKey, 5)
+        assertEquals(p2.prevKey, 0)
+        assertEquals(p2.nextKey, 8)
 
-        coVerify(exactly = 2) {
+        val p3 = pager.append() as PagingSource.LoadResult.Page
+
+        assertEquals(p3.data.size, 2)
+        assertEquals(p3.prevKey, 6)
+        assertEquals(p3.nextKey, 10)
+
+        val p4 = pager.append() as PagingSource.LoadResult.Page
+
+        assertEquals(p4.data.size, 2)
+        assertEquals(p4.prevKey, 8)
+        assertEquals(p4.nextKey, 12)
+
+        coVerify {
             pokeApi.getPokemonList(any(), any())
         }
     }
+
+    @Test
+    fun `getRefreshKey함수가 anchorPosition 기준으로 가장 가까운 페이지로 refresh되는지 확인한다`() = runTest {
+        coEvery {
+            pokeApi.getPokemonList(6, 0)
+        } coAnswers {
+            ResponsePokemonInfo(
+                count = 1000,
+                next = "https://pokeapi.co/api/v2/pokemon?offset=4&limit=1",
+                previous = "https://pokeapi.co/api/v2/pokemon?offset=3&limit=1",
+                results = listOf(
+                    ResponsePokemon(
+                        name = "bulbasaur",
+                        url = "https://pokeapi.co/api/v2/pokemon/1/"
+                    ),
+                    ResponsePokemon(
+                        name = "ivysaur",
+                        url = "https://pokeapi.co/api/v2/pokemon/2/"
+                    ),
+                    ResponsePokemon(
+                        name = "bulbasaur",
+                        url = "https://pokeapi.co/api/v2/pokemon/3/"
+                    ),
+                    ResponsePokemon(
+                        name = "ivysaur",
+                        url = "https://pokeapi.co/api/v2/pokemon/4/"
+                    ),
+                    ResponsePokemon(
+                        name = "bulbasaur",
+                        url = "https://pokeapi.co/api/v2/pokemon/5/"
+                    ),
+                    ResponsePokemon(
+                        name = "ivysaur",
+                        url = "https://pokeapi.co/api/v2/pokemon/6/"
+                    )
+                )
+            )
+        }
+
+        coEvery {
+            pokeApi.getPokemonList(2, more(0))
+        } answers {
+            ResponsePokemonInfo(
+                count = 1000,
+                next = "https://pokeapi.co/api/v2/pokemon?offset=4&limit=1",
+                previous = "https://pokeapi.co/api/v2/pokemon?offset=3&limit=1",
+                results = listOf(
+                    ResponsePokemon(
+                        name = "bulbasaur",
+                        url = "https://pokeapi.co/api/v2/pokemon/6/"
+                    ),
+                    ResponsePokemon(
+                        name = "ivysaur",
+                        url = "https://pokeapi.co/api/v2/pokemon/7/"
+                    )
+                )
+            )
+        }
+
+        val source = PokemonPagingSource(api = pokeApi)
+
+        val pager = TestPager(config = config, pagingSource = source)
+
+        val p1 = pager.refresh() as PagingSource.LoadResult.Page
+
+        assertEquals(p1.data.size, 6)
+        assertEquals(p1.prevKey, null)
+        assertEquals(p1.nextKey, 6)
+
+        val p2 = pager.append() as PagingSource.LoadResult.Page
+
+        assertEquals(p2.data.size, 2)
+        assertEquals(p2.prevKey, 0)
+        assertEquals(p2.nextKey, 8)
+
+        val key = source.getRefreshKey(pager.getPagingState(7))
+
+        assertEquals(key, 6)
+    }
+
 
     @Test
     fun `페이지 호출 시, error로 떨어진다`() = runTest {
@@ -190,10 +276,7 @@ class PagingSourceTest {
             throw NoSuchElementException()
         }
 
-        val source = PokemonPagingSource(
-            pageSize = pageSize,
-            onRequestPage = { page, size -> pokeApi.getPokemonList(size, page) }
-        )
+        val source = PokemonPagingSource(api = pokeApi)
 
         val pager = TestPager(config = config, pagingSource = source)
 

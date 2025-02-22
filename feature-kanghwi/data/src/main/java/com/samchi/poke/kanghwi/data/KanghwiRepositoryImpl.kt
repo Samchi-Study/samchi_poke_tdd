@@ -11,10 +11,7 @@ internal class KanghwiRepositoryImpl @Inject constructor(
     private val pokeApi: PokeApi
 ) : KanghwiRepository {
 
-    override fun getPokemonPagingSource(pageSize: Int): PagingSource<Int, Pokemon> =
-        PokemonPagingSource(
-            pageSize = pageSize,
-            onRequestPage = { page, size -> pokeApi.getPokemonList(size, page) }
-        )
+    override fun getPokemonPagingSource(): PagingSource<Int, Pokemon> =
+        PokemonPagingSource(api = pokeApi)
 
 }

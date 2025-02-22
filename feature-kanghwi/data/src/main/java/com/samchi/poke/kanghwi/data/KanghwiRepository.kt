@@ -6,8 +6,6 @@ import com.samchi.poke.model.Pokemon
 
 interface KanghwiRepository {
 
-    fun getPokemonPagingSource(
-        pageSize: Int
-    ): PagingSource<Int, Pokemon>
+    fun getPokemonPagingSource(): PagingSource<Int, Pokemon>
 
 }

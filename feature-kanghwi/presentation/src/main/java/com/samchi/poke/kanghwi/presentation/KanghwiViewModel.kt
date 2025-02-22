@@ -15,16 +15,15 @@ internal class KanghwiViewModel @Inject constructor(
     private val kanghwiRepository: KanghwiRepository
 ) : ViewModel() {
 
-    private val pageSize = 100
-
     val pager = Pager(
         config = PagingConfig(
-            pageSize = pageSize,
-            enablePlaceholders = true,
-            maxSize = pageSize * 4
+            pageSize = 30,
+            enablePlaceholders = true
         ),
-        pagingSourceFactory = { kanghwiRepository.getPokemonPagingSource(pageSize) }
+        pagingSourceFactory = { kanghwiRepository.getPokemonPagingSource() }
     )
         .flow
         .cachedIn(viewModelScope)
+
+
 }

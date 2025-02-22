@@ -4,35 +4,31 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.samchi.poke.kanghwi.toModel
 import com.samchi.poke.model.Pokemon
-import com.samchi.poke.network.dto.ResponsePokemonInfo
+import com.samchi.poke.network.PokeApi
 
 
 class PokemonPagingSource(
-    private val pageSize: Int,
-    private val onRequestPage: suspend (Int, Int) -> ResponsePokemonInfo
+    private val api: PokeApi
 ) : PagingSource<Int, Pokemon>() {
 
-    private var page = 0
-
+    private var previousPage: Int = 0
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Pokemon> =
         try {
-            page = params.key ?: START_KEY
-            val result = onRequestPage(page, params.loadSize)
-
-            if (page == START_KEY) {
-                page += params.loadSize / pageSize
-            }
+            val page = params.key ?: START_KEY
+            val result = api.getPokemonList(limit = params.loadSize, offset = page)
 
             val previous = when {
                 page == START_KEY || result.previous == null -> null
-                else -> page - 1
+                else -> previousPage
             }
 
             val next = when (result.next) {
                 null -> null
-                else -> page + 1
+                else -> page + params.loadSize
             }
+
+            previousPage = page
 
             LoadResult.Page(
                 data = result.toModel().results,
@@ -44,7 +40,17 @@ class PokemonPagingSource(
         }
 
     override fun getRefreshKey(state: PagingState<Int, Pokemon>): Int {
-        return page
+        val loadResult = state.closestPageToPosition(state.anchorPosition ?: 0)
+
+        if (loadResult == null) return START_KEY
+
+        val size = loadResult.data.size
+
+        return when {
+            loadResult.nextKey != null -> loadResult.nextKey!! - size
+            loadResult.prevKey != null -> loadResult.prevKey!! + size
+            else -> START_KEY
+        }
     }
 
 
