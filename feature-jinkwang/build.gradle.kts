@@ -15,6 +15,9 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.retrofit.core)
     implementation(libs.retrofit.kotlin.serialization)
+    implementation(libs.room.ktx)
+    implementation(libs.room.runtime)
+    ksp(libs.room.compiler)
     implementation(project(":network"))
     implementation(project(":model"))
 }
