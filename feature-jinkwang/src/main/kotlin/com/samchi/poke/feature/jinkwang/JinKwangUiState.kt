@@ -8,6 +8,7 @@ internal sealed interface JinKwangUiState {
 
     data class Success(
         val pokemonList: List<Pokemon>,
+        val onClickFavorite: (Pokemon) -> Unit,
         val isError: Boolean = false,
         val isEndOfPage: Boolean = false,
     ) : JinKwangUiState
