@@ -10,3 +10,7 @@ android {
         enableAggregatingTask = true
     }
 }
+
+dependencies {
+    implementation(project(":network"))
+}
