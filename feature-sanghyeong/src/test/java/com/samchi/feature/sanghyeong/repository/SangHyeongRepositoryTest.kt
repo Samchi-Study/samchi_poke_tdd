@@ -1,38 +1,69 @@
 package com.samchi.feature.sanghyeong.repository
 
-import com.samchi.poke.model.PokemonInfo
+import com.samchi.poke.model.Pokemon
 import com.samchi.poke.network.PokeApi
+import io.mockk.MockKAnnotations
 import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
 class SangHyeongRepositoryTest {
 
-    private lateinit var pokeApi: PokeApi
-    private lateinit var repository: SangHyeongRepository
+    @MockK
+    private lateinit var repository: SangHyeongRepositoryImpl
 
     @Before
     fun setup() {
-        pokeApi = mockk()
-        repository = SangHyeongRepositoryImpl(pokeApi = pokeApi)
+        MockKAnnotations.init(this)
     }
 
     @Test
-    fun `getPokemonPage Success 불러오기`() = runTest {
-        val mockPokemonInfo = mockk<PokemonInfo>()
-        coEvery { repository.getPokemonPage() } returns flow {
-            emit(Result.success(value = mockPokemonInfo))
+    fun `getPokemonList 불러오기`() = runTest {
+        coEvery {
+            repository.getPokemonList(
+                index = any(),
+                onStart = any(),
+                onCompletion = any(),
+                onError = any(),
+            )
+        } coAnswers {
+            flow {
+                emit(
+                    listOf(
+                        Pokemon(name = "피카츄", url = ""),
+                    )
+                )
+            }
+            }
+
+        launch(UnconfinedTestDispatcher()) {
+            repository.getPokemonList(
+                index = 0,
+                onStart = { },
+                onCompletion = { },
+                onError = { }
+            ).collect { result ->
+                assertEquals(result.size, 1)
+                assertEquals(result[0].name, "피카츄")
+            }
         }
 
-        launch {
-            repository.getPokemonPage().collect { result ->
-                assertTrue(result.isSuccess)
-            }
+        coVerify {
+            repository.getPokemonList(
+                index = 0,
+                onStart = { },
+                onCompletion = { },
+                onError = { },
+            )
         }
     }
 }

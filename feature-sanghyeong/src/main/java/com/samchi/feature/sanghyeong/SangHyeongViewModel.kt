@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,7 +24,7 @@ class SangHyeongViewModel @Inject constructor(
 
     private val fetchingIndex = MutableStateFlow(0)
     val pokemonList: StateFlow<List<Pokemon>> = fetchingIndex.flatMapLatest { index ->
-        sangHyeongRepository.getPokemonPage(
+        sangHyeongRepository.getPokemonList(
             index = index,
             onStart = { setLoading(loading = true) },
             onCompletion = { setLoading(loading = false) },

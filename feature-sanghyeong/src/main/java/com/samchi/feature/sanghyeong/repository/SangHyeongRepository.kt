@@ -1,15 +1,14 @@
 package com.samchi.feature.sanghyeong.repository
 
 import com.samchi.poke.model.Pokemon
-import com.samchi.poke.model.PokemonInfo
 import kotlinx.coroutines.flow.Flow
 
 interface SangHyeongRepository {
-    fun getPokemonPage(
+    fun getPokemonList(
         index: Int,
-        onStart: () -> Unit,
-        onCompletion: () -> Unit,
-        onError: (Throwable) -> Unit,
+        onStart: (() -> Unit)? = null,
+        onCompletion: (() -> Unit)? = null,
+        onError: ((Throwable) -> Unit)? = null,
     ): Flow<List<Pokemon>>
     fun hasMoreData(): Boolean
 }

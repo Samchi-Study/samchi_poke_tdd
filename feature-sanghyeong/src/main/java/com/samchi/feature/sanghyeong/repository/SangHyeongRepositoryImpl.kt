@@ -16,11 +16,11 @@ class SangHyeongRepositoryImpl @Inject constructor(
     private var offset: String? = null
     private var currentPokemonList = mutableListOf<Pokemon>()
 
-    override fun getPokemonPage(
+    override fun getPokemonList(
         index: Int,
-        onStart: () -> Unit,
-        onCompletion: () -> Unit,
-        onError: (Throwable) -> Unit
+        onStart: (() -> Unit)?,
+        onCompletion: (() -> Unit)?,
+        onError: ((Throwable) -> Unit)?,
     ): Flow<List<Pokemon>> {
         return flow {
             kotlin.runCatching {
@@ -30,12 +30,12 @@ class SangHyeongRepositoryImpl @Inject constructor(
                 currentPokemonList.addAll(result.results.asDomain())
                 emit(value = currentPokemonList)
             }.onFailure { throwable ->
-                onError(throwable)
+                onError?.invoke(throwable)
             }
         }.onStart {
-            onStart()
+            onStart?.invoke()
         }.onCompletion {
-            onCompletion()
+            onCompletion?.invoke()
         }
     }
 
