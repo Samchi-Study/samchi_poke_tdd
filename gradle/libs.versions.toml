@@ -19,6 +19,7 @@ retrofit = "2.11.0"
 network-ihsanbal = "3.0.0"
 network-interceptor = "4.9.0"
 kotlinx-serialization = "1.8.0"
+kotlinx-immutable = "0.3.7"
 room = "2.6.1"
 hilt = "2.52"
 hiltExt = "1.2.0"
@@ -59,6 +60,7 @@ androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-
 retrofit-core = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
 retrofit-kotlin-serialization = { group = "com.squareup.retrofit2", name = "converter-kotlinx-serialization", version.ref = "retrofit" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization"}
+kotlinx-immutable = { group = "org.jetbrains.kotlinx", name = "kotlinx-collections-immutable", version.ref = "kotlinx-immutable" }
 network-interceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "network-interceptor" }
 
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }

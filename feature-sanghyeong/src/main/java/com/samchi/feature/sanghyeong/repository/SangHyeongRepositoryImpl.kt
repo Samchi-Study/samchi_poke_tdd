@@ -1,46 +1,50 @@
 package com.samchi.feature.sanghyeong.repository
 
 import android.net.Uri
-import com.samchi.feature.sanghyeong.data.toPokemonInfo
-import com.samchi.poke.model.PokemonInfo
+import com.samchi.feature.sanghyeong.data.asDomain
+import com.samchi.poke.model.Pokemon
 import com.samchi.poke.network.PokeApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onStart
 import javax.inject.Inject
 
 class SangHyeongRepositoryImpl @Inject constructor(
     private val pokeApi: PokeApi
 ) : SangHyeongRepository {
     private var offset: String? = null
+    private var currentPokemonList = mutableListOf<Pokemon>()
 
-    override suspend fun getPokemonPage(): Flow<Result<PokemonInfo>> {
+    override fun getPokemonPage(
+        index: Int,
+        onStart: () -> Unit,
+        onCompletion: () -> Unit,
+        onError: (Throwable) -> Unit
+    ): Flow<List<Pokemon>> {
         return flow {
             kotlin.runCatching {
-                pokeApi.getPokemonList(offset = 0)
+                pokeApi.getPokemonList(limit = LIMIT, offset = index * LIMIT)
             }.onSuccess { result ->
                 offset = getNextOffset(offset = result.next ?: "")
-                emit(Result.success(value = result.toPokemonInfo()))
+                currentPokemonList.addAll(result.results.asDomain())
+                emit(value = currentPokemonList)
             }.onFailure { throwable ->
-                emit(Result.failure(exception = throwable))
+                onError(throwable)
             }
-        }
-    }
-
-    override suspend fun getNextPokemonPage(): Flow<Result<PokemonInfo>> {
-        return flow {
-            kotlin.runCatching {
-                pokeApi.getPokemonList(offset = offset?.toInt() ?: 0)
-            }.onSuccess { result ->
-                offset = getNextOffset(offset = result.next ?: "")
-                emit(Result.success(value = result.toPokemonInfo()))
-            }.onFailure { throwable ->
-                emit(Result.failure(exception = throwable))
-            }
+        }.onStart {
+            onStart()
+        }.onCompletion {
+            onCompletion()
         }
     }
 
     override fun hasMoreData(): Boolean {
         return offset?.isNotEmpty() == true
+    }
+
+    companion object {
+        private const val LIMIT = 30
     }
 }
 

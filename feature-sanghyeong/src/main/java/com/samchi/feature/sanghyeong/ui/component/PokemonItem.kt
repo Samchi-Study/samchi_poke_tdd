@@ -26,7 +26,7 @@ internal fun PokemonItem(pokemon: Pokemon) {
         modifier = Modifier
             .fillMaxWidth()
             .background(color = Color.LightGray, shape = RoundedCornerShape(size = 20.dp))
-            .padding(all = 50.dp),
+            .padding(all = 25.dp),
         horizontalArrangement = Arrangement.spacedBy(space = 20.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -39,7 +39,7 @@ internal fun PokemonItem(pokemon: Pokemon) {
         Text(
             text = pokemon.name,
             fontWeight = FontWeight.W400,
-            fontSize = 20.sp,
+            fontSize = 16.sp,
         )
     }
 }

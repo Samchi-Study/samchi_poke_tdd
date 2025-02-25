@@ -18,3 +18,7 @@ private fun ResponsePokemon.toPokemon(): Pokemon {
         url = this.url,
     )
 }
+
+internal fun List<ResponsePokemon>.asDomain(): List<Pokemon> {
+    return this.map { it.toPokemon() }
+}
