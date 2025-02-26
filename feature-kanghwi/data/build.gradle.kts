@@ -16,4 +16,7 @@ dependencies {
     implementation(project(":network"))
 
     implementation(libs.androidx.core.ktx)
+    implementation(libs.paging3)
+    implementation(libs.paging.test.android)
+    testImplementation(libs.paging3.common)
 }
