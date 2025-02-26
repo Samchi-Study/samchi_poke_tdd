@@ -6,9 +6,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.samchi.poke.model.Pokemon
+import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 internal fun SangHyeongScreen(
+    pokemonList: ImmutableList<Pokemon>,
     uiState: SangHyeongUiState,
     uiActions: SangHyeongUiActions,
 ) {
@@ -16,22 +19,17 @@ internal fun SangHyeongScreen(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center,
     ) {
-        when {
-            uiState.loading -> {
-                SangHyeongLoadingScreen()
-            }
-            uiState.error != null -> {
-                SangHyeongErrorScreen(
-                    throwable = uiState.error,
-                    onRetry = uiActions::onRetry,
-                )
-            }
-            else -> {
-                SangHyeongSuccessScreen(
-                    pokemonList = uiState.pokemonList,
-                    onBottomReached = uiActions::onLoadMore,
-                )
-            }
+        if (uiState.error != null) {
+            SangHyeongErrorScreen(
+                throwable = uiState.error,
+                onRetry = uiActions::onRetry,
+            )
+        } else {
+            SangHyeongSuccessScreen(
+                pokemonList = pokemonList,
+                loading = uiState.loading,
+                onBottomReached = uiActions::onLoadMore,
+            )
         }
     }
 }
