@@ -33,7 +33,7 @@ fun KanghwiRoute(
 ) {
     val viewModel: KanghwiViewModel = hiltViewModel()
 
-    val pagingData = viewModel.pager.collectAsLazyPagingItems()
+    val pagingData = viewModel.pagingFlow.collectAsLazyPagingItems()
 
     KanghwiScreen(
         pagingData = pagingData,

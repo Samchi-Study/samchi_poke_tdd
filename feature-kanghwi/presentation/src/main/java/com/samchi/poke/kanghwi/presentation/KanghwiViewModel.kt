@@ -5,22 +5,22 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
-import com.samchi.poke.kanghwi.data.KanghwiRepository
+import com.samchi.poke.kanghwi.pagingsource.PokemonPagingSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 
 @HiltViewModel
 internal class KanghwiViewModel @Inject constructor(
-    private val kanghwiRepository: KanghwiRepository
+    pagingSource: PokemonPagingSource
 ) : ViewModel() {
 
-    val pager = Pager(
+    val pagingFlow = Pager(
         config = PagingConfig(
             pageSize = 30,
             enablePlaceholders = true
         ),
-        pagingSourceFactory = { kanghwiRepository.getPokemonPagingSource() }
+        pagingSourceFactory = { pagingSource }
     )
         .flow
         .cachedIn(viewModelScope)

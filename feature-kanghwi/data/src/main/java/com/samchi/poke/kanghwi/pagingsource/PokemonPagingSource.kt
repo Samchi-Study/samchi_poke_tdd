@@ -5,9 +5,12 @@ import androidx.paging.PagingState
 import com.samchi.poke.kanghwi.toModel
 import com.samchi.poke.model.Pokemon
 import com.samchi.poke.network.PokeApi
+import javax.inject.Inject
+import javax.inject.Singleton
 
 
-class PokemonPagingSource(
+@Singleton
+class PokemonPagingSource @Inject constructor(
     private val api: PokeApi
 ) : PagingSource<Int, Pokemon>() {
 
