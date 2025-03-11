@@ -1,10 +1,9 @@
 package com.samchi.feature.sanghyeong.repository
 
-import com.samchi.poke.model.PokemonInfo
+import com.samchi.poke.model.Pokemon
 import kotlinx.coroutines.flow.Flow
 
 interface SangHyeongRepository {
-    suspend fun getPokemonPage(): Flow<Result<PokemonInfo>>
-    suspend fun getNextPokemonPage(): Flow<Result<PokemonInfo>>
+    fun getPokemonList(index: Int): Flow<List<Pokemon>>
     fun hasMoreData(): Boolean
 }

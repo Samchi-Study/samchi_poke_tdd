@@ -13,4 +13,6 @@ android {
 
 dependencies {
     implementation(project(":network"))
+
+    implementation(libs.kotlinx.immutable)
 }
