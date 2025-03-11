@@ -107,6 +107,7 @@ private fun PokemonItem(
 
         ) {
             AsyncImage(
+                modifier= Modifier.size(128.dp),
                 model = pokemon.getImageUrl(),
                 placeholder = painterResource(R.drawable.icon_pokeball_black),
                 contentDescription = null
