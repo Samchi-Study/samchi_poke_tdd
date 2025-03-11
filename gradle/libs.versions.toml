@@ -31,6 +31,7 @@ lifecycleViewmodelCompose = "2.8.7"
 coreKtxVersion = "1.6.1"
 junitKtx = "1.2.1"
 coil = "3.0.4"
+paging3 = "3.3.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -111,6 +112,10 @@ hilt-ext-compiler = { group = "androidx.hilt", name = "hilt-compiler", version.r
 hilt-ext-work = { group = "androidx.hilt", name = "hilt-work", version.ref = "hiltExt" }
 
 coil = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
+paging3 = { module = "androidx.paging:paging-runtime", version.ref = "paging3" }
+paging3-common = { module = "androidx.paging:paging-common", version.ref = "paging3" }
+paging-test-android = {module = "androidx.paging:paging-testing-android", version.ref = "paging3" }
+paging3-compose = { module = "androidx.paging:paging-compose",version.ref = "paging3" }
 
 # Dependencies of the included build-logic
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }

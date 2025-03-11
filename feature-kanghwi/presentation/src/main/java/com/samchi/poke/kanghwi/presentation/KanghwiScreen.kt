@@ -8,14 +8,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,7 +21,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import coil3.compose.AsyncImage
 import com.samchi.poke.model.Pokemon
 
@@ -34,50 +33,42 @@ fun KanghwiRoute(
 ) {
     val viewModel: KanghwiViewModel = hiltViewModel()
 
-    val uiState: UiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val pagingData = viewModel.pagingFlow.collectAsLazyPagingItems()
 
     KanghwiScreen(
-        uiState = uiState,
-        onRetryEvent = { viewModel.retry() }
+        pagingData = pagingData,
+        onRetryEvent = { }
     )
 }
 
 @Composable
 private fun KanghwiScreen(
     modifier: Modifier = Modifier,
-    uiState: UiState,
+    pagingData: LazyPagingItems<Pokemon>,
     onRetryEvent: () -> Unit
 ) {
-
-    when (uiState) {
-        is UiState.Success -> {
-            PokeList(list = uiState.pokemonList)
-        }
-        is UiState.Error -> {
-            PokemonError {
-                onRetryEvent()
-            }
-        }
-        UiState.Loading -> {
-            PokemonCircleProgressBar()
-        }
-    }
+    PokeList(
+        modifier = modifier,
+        list = pagingData
+    )
 }
 
 @Composable
 private fun PokeList(
     modifier: Modifier = Modifier,
-    list: List<Pokemon>
+    list: LazyPagingItems<Pokemon>
 ) {
     LazyColumn(modifier = modifier) {
-        items(list) { item ->
+        items(
+            count = list.itemCount,
+            key = { idx -> list[idx]!!.name }) { idx ->
             Column {
                 Row(
                     modifier = Modifier
                         .padding(vertical = 6.dp, horizontal = 12.dp)
                 ) {
                     AsyncImage(
-                        model = item.getImageUrl(),
+                        model = list[idx]!!.getImageUrl(),
                         placeholder = painterResource(R.drawable.icon_pokeball_black),
                         contentDescription = null
                     )
@@ -85,7 +76,7 @@ private fun PokeList(
                     Text(
                         modifier = modifier
                             .padding(start = 12.dp),
-                        text = item.name
+                        text = list[idx]!!.name
                     )
                 }
 
@@ -133,14 +124,7 @@ private fun PokemonCircleProgressBar() {
 @Composable
 @Preview
 private fun PreviewPokeList() {
-    PokeList(
-        list = listOf(
-            Pokemon("피카츄", "https://pokeapi.co/api/v2/pokemon/2/"),
-            Pokemon("피카츄", "https://pokeapi.co/api/v2/pokemon/2/"),
-            Pokemon("피카츄", "https://pokeapi.co/api/v2/pokemon/2/"),
-            Pokemon("피카츄", "https://pokeapi.co/api/v2/pokemon/2/"),
-        )
-    )
+
 }
 
 @Composable
