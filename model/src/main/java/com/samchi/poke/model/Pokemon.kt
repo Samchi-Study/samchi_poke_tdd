@@ -3,7 +3,8 @@ package com.samchi.poke.model
 
 data class Pokemon(
     val name: String,
-    private val url: String
+    private val url: String,
+    val isFavorite: Boolean
 ) {
 
     fun getImageUrl(): String {

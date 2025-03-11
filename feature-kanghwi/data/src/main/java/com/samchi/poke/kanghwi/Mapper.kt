@@ -1,5 +1,6 @@
 package com.samchi.poke.kanghwi
 
+import com.samchi.poke.kanghwi.db.entity.PokemonEntity
 import com.samchi.poke.model.Pokemon
 import com.samchi.poke.model.PokemonInfo
 import com.samchi.poke.network.dto.ResponsePokemon
@@ -13,5 +14,13 @@ internal fun ResponsePokemonInfo.toModel() = PokemonInfo(
 
 internal fun ResponsePokemon.toModel() = Pokemon(
     name = name,
-    url = url
+    url = url,
+    isFavorite = false
+)
+
+internal fun Pokemon.toEntity() = PokemonEntity(
+    id = 0,
+    name = name,
+    url = getImageUrl(),
+    isFavorite = false
 )

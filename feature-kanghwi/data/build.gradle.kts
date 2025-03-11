@@ -14,6 +14,7 @@ android {
 dependencies {
     implementation(project(":model"))
     implementation(project(":network"))
+    implementation(project(":feature-kanghwi:db"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.paging3)

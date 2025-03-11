@@ -3,7 +3,9 @@ package com.samchi.poke.kanghwi.data
 import androidx.paging.PagingConfig
 import androidx.paging.PagingSource
 import androidx.paging.testing.TestPager
+import com.samchi.poke.kanghwi.LocalDataSource
 import com.samchi.poke.kanghwi.pagingsource.PokemonPagingSource
+import com.samchi.poke.model.Pokemon
 import com.samchi.poke.network.PokeApi
 import com.samchi.poke.network.dto.ResponsePokemon
 import com.samchi.poke.network.dto.ResponsePokemonInfo
@@ -30,6 +32,9 @@ class PagingSourceTest {
 
     @MockK
     private lateinit var pokeApi: PokeApi
+
+    @MockK
+    private lateinit var localDataSource: LocalDataSource
 
     private val pageSize = 2
 
@@ -65,7 +70,7 @@ class PagingSourceTest {
                 url = "https://pokeapi.co/api/v2/pokemon/5/"
             ),
             ResponsePokemon(
-                name = "ivysaur",
+                name = "피카츄",
                 url = "https://pokeapi.co/api/v2/pokemon/6/"
             )
         )
@@ -81,15 +86,28 @@ class PagingSourceTest {
             )
         }
 
-        val source = PokemonPagingSource(api = pokeApi)
+        coEvery {
+            localDataSource.getPokemonList()
+        } answers {
+            listOf(
+                Pokemon(
+                    name = "피카츄",
+                    url = "test",
+                    isFavorite = true
+                )
+            )
+        }
+
+        val source = PokemonPagingSource(pokeApi, localDataSource)
 
         val pager = TestPager(config = config, pagingSource = source)
 
         val result = pager.refresh() as PagingSource.LoadResult.Page
 
-        assertEquals(result.data.size, 6)
-        assertEquals(result.prevKey, null)
-        assertEquals(result.nextKey, 6)
+        assertEquals(6, result.data.size)
+        assertEquals(null, result.prevKey)
+        assertEquals(6, result.nextKey)
+        assertEquals(true, result.data[5].isFavorite)
 
         coVerify(exactly = 1) {
             pokeApi.getPokemonList(any(), any())
@@ -155,7 +173,19 @@ class PagingSourceTest {
             )
         }
 
-        val source = PokemonPagingSource(api = pokeApi)
+        coEvery {
+            localDataSource.getPokemonList()
+        } answers {
+            listOf(
+                Pokemon(
+                    name = "피카츄",
+                    url = "test",
+                    isFavorite = true
+                )
+            )
+        }
+
+        val source = PokemonPagingSource(pokeApi, localDataSource)
 
         val pager = TestPager(config = config, pagingSource = source)
 
@@ -246,7 +276,19 @@ class PagingSourceTest {
             )
         }
 
-        val source = PokemonPagingSource(api = pokeApi)
+        coEvery {
+            localDataSource.getPokemonList()
+        } answers {
+            listOf(
+                Pokemon(
+                    name = "피카츄",
+                    url = "test",
+                    isFavorite = true
+                )
+            )
+        }
+
+        val source = PokemonPagingSource(pokeApi, localDataSource)
 
         val pager = TestPager(config = config, pagingSource = source)
 
@@ -276,7 +318,19 @@ class PagingSourceTest {
             throw NoSuchElementException()
         }
 
-        val source = PokemonPagingSource(api = pokeApi)
+        coEvery {
+            localDataSource.getPokemonList()
+        } answers {
+            listOf(
+                Pokemon(
+                    name = "피카츄",
+                    url = "test",
+                    isFavorite = true
+                )
+            )
+        }
+
+        val source = PokemonPagingSource(pokeApi, localDataSource)
 
         val pager = TestPager(config = config, pagingSource = source)
 
