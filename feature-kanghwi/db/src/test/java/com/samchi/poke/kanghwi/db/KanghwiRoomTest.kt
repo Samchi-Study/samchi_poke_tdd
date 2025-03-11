@@ -177,4 +177,42 @@ class KanghwiRoomTest {
         assertEquals("피카츄", list[0].name)
         assertEquals("이상해씨", list[1].name)
     }
+
+    @Test
+    fun `낱개로 저장한 후 entity를 모두 가져올 때 list로 받을 수 있다`() = runTest {
+        val entities = listOf(
+            PokemonEntity(
+                id = 1,
+                name = "피카츄",
+                url = "test",
+                isFavorite = false
+            ),
+            PokemonEntity(
+                id = 2,
+                name = "갸라도스",
+                url = "test",
+                isFavorite = false
+            ),
+            PokemonEntity(
+                id = 3,
+                name = "이상해씨",
+                url = "test",
+                isFavorite = false
+            )
+        )
+
+        entities.forEach {
+            dao.insertPokemon(it)
+        }
+
+        val list = dao.getPokemonList()
+
+        assertEquals(3, list.size)
+        assertEquals("피카츄", list[0].name)
+        assertEquals(1, list[0].id)
+        assertEquals("갸라도스", list[1].name)
+        assertEquals(2, list[1].id)
+        assertEquals("이상해씨", list[2].name)
+        assertEquals(3, list[2].id)
+    }
 }
