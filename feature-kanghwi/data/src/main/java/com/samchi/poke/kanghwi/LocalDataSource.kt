@@ -1,7 +1,7 @@
 package com.samchi.poke.kanghwi
 
 import com.samchi.poke.kanghwi.db.KanghwiDao
-import com.samchi.poke.kanghwi.db.entity.PokemonEntity
+import com.samchi.poke.model.Pokemon
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -13,8 +13,12 @@ class LocalDataSource @Inject constructor(
 
     suspend fun getPokemonList() = dao.getPokemonList().map { it.toModel() }
 
-    suspend fun upsertPokemon(entity: PokemonEntity) = dao.upsertPokemon(entity)
+    suspend fun upsertPokemon(model: Pokemon) {
+        dao.upsertPokemon(model.toEntity())
+    }
 
-    suspend fun deletePokemon(entity: PokemonEntity) = dao.deletePokemon(entity)
+    suspend fun deletePokemon(model: Pokemon) {
+        dao.deletePokemon(model.toEntity())
+    }
 
 }

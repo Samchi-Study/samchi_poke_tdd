@@ -6,12 +6,9 @@ import com.samchi.poke.kanghwi.LocalDataSource
 import com.samchi.poke.kanghwi.toModel
 import com.samchi.poke.model.Pokemon
 import com.samchi.poke.network.PokeApi
-import javax.inject.Inject
-import javax.inject.Singleton
 
 
-@Singleton
-class PokemonPagingSource @Inject constructor(
+class PokemonPagingSource(
     private val api: PokeApi,
     private val localDataSource: LocalDataSource
 ) : PagingSource<Int, Pokemon>() {
