@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "KanghwiPokemon")
 data class PokemonEntity(
     @PrimaryKey(autoGenerate = true)
-    val id: Int,
+    val id: Int = 0,
 
     val name: String,
     val url: String,

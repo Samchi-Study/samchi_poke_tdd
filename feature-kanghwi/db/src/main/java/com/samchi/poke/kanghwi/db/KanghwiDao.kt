@@ -14,7 +14,7 @@ import com.samchi.poke.kanghwi.db.entity.PokemonEntity
 interface KanghwiDao {
 
     @Query("SELECT * FROM KanghwiPokemon WHERE id =:id ")
-    suspend fun getPokemon(id: Int): PokemonEntity
+    suspend fun getPokemon(id: Int): PokemonEntity?
 
     @Query("SELECT * FROM KanghwiPokemon")
     suspend fun getPokemonList(): List<PokemonEntity>
