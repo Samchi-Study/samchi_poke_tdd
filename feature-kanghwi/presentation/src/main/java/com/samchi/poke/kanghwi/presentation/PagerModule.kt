@@ -14,7 +14,7 @@ import dagger.hilt.android.components.ViewModelComponent
 
 @Module
 @InstallIn(ViewModelComponent::class)
-object PagerModule {
+internal object PagerModule {
 
     @Provides
     fun providePager(
