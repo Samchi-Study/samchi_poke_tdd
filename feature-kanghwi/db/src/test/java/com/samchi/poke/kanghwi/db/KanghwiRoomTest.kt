@@ -295,7 +295,7 @@ class KanghwiRoomTest {
 
         dao.insertPokemonList(entities)
 
-        dao.deletePokemon(entities[1])
+        dao.deletePokemon(entities[1].name)
 
         val list = dao.getPokemonList()
 
@@ -312,7 +312,7 @@ class KanghwiRoomTest {
             isFavorite = false
         )
 
-        dao.deletePokemon(entity)
+        dao.deletePokemon(entity.name)
 
     }
 

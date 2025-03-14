@@ -31,7 +31,7 @@ interface KanghwiDao {
     @Upsert
     suspend fun upsertPokemon(entity: PokemonEntity)
 
-    @Delete
-    suspend fun deletePokemon(entity: PokemonEntity)
+    @Query("DELETE FROM kanghwipokemon WHERE name =:name")
+    suspend fun deletePokemon(name: String)
 
 }

@@ -19,7 +19,6 @@ internal fun ResponsePokemon.toModel() = Pokemon(
 )
 
 internal fun Pokemon.toEntity() = PokemonEntity(
-    id = 0,
     name = name,
     url = getImageUrl(),
     isFavorite = isFavorite
