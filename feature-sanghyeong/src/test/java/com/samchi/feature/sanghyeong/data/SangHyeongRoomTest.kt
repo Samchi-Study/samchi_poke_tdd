@@ -43,9 +43,9 @@ class SangHyeongRoomTest {
                 url = "",
                 isFavorite = true,
             )
-            dao.insertPokemon(entity = pikachuEntity)
+            dao.insertFavoritePokemon(entity = pikachuEntity)
 
-            val pokemonList = dao.getPokemonList()
+            val pokemonList = dao.getFavoritePokemonList()
             assertEquals(pokemonList.size, 1)
             assertEquals(pokemonList.firstOrNull()?.name, pikachuEntity.name)
         }
@@ -60,15 +60,15 @@ class SangHyeongRoomTest {
                 isFavorite = true,
             )
             // 피카츄 Entity 추가
-            dao.insertPokemon(entity = pikachuEntity)
+            dao.insertFavoritePokemon(entity = pikachuEntity)
 
-            assertEquals(dao.getPokemonList().size, 1)
-            assertEquals(dao.getPokemonList().firstOrNull()?.name, pikachuEntity.name)
+            assertEquals(dao.getFavoritePokemonList().size, 1)
+            assertEquals(dao.getFavoritePokemonList().firstOrNull()?.name, pikachuEntity.name)
 
             // 피카츄 Entity 삭제
-            dao.deletePokemon(entity = pikachuEntity)
+            dao.deleteFavoritePokemon(entity = pikachuEntity)
 
-            assertEquals(dao.getPokemonList().size, 0)
+            assertEquals(dao.getFavoritePokemonList().size, 0)
         }
     }
 
@@ -81,15 +81,15 @@ class SangHyeongRoomTest {
                 isFavorite = true,
             )
             // 피카츄 Entity 추가
-            dao.insertPokemon(entity = pikachuEntity)
+            dao.insertFavoritePokemon(entity = pikachuEntity)
 
-            assertEquals(dao.getPokemonList().size, 1)
-            assertEquals(dao.getPokemonList().firstOrNull()?.name, pikachuEntity.name)
+            assertEquals(dao.getFavoritePokemonList().size, 1)
+            assertEquals(dao.getFavoritePokemonList().firstOrNull()?.name, pikachuEntity.name)
 
             // 피카츄 Entity 삭제
-            dao.deletePokemonByName(name = pikachuEntity.name)
+            dao.deleteFavoritePokemonByName(name = pikachuEntity.name)
 
-            assertEquals(dao.getPokemonList().size, 0)
+            assertEquals(dao.getFavoritePokemonList().size, 0)
         }
     }
 }
