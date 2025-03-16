@@ -1,8 +1,8 @@
 package com.samchi.feature.sanghyeong.ui.component
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -13,11 +13,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import com.samchi.feature.sanghyeong.R
 import com.samchi.poke.model.Pokemon
 
 @Composable
@@ -26,20 +28,29 @@ internal fun PokemonItem(pokemon: Pokemon) {
         modifier = Modifier
             .fillMaxWidth()
             .background(color = Color.LightGray, shape = RoundedCornerShape(size = 20.dp))
-            .padding(all = 25.dp),
+            .padding(
+                vertical = 25.dp,
+                horizontal = 40.dp,
+            ),
         horizontalArrangement = Arrangement.spacedBy(space = 20.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         AsyncImage(
-            modifier = Modifier.size(150.dp),
+            modifier = Modifier.size(100.dp),
             model = pokemon.getImageUrl(),
             contentDescription = null
         )
 
         Text(
+            modifier = Modifier.weight(1f),
             text = pokemon.name,
-            fontWeight = FontWeight.W400,
-            fontSize = 16.sp,
+            fontSize = 20.sp,
+        )
+
+        Image(
+            modifier = Modifier.size(24.dp),
+            painter = painterResource(id = R.drawable.ic_favorite_border),
+            contentDescription = null,
         )
     }
 }
