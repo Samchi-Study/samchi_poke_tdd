@@ -1,5 +1,6 @@
 package com.samchi.feature.sanghyeong.repository
 
+import com.samchi.feature.sanghyeong.model.SangHyeongPokemon
 import com.samchi.poke.model.Pokemon
 import com.samchi.poke.network.PokeApi
 import io.mockk.MockKAnnotations
@@ -38,8 +39,8 @@ class SangHyeongRepositoryTest {
                 flow {
                     emit(
                         listOf(
-                            Pokemon(name = "피카츄", url = ""),
-                            Pokemon(name = "라이츄", url = ""),
+                            SangHyeongPokemon(name = "피카츄", url = ""),
+                            SangHyeongPokemon(name = "라이츄", url = ""),
                         )
                     )
                 }
