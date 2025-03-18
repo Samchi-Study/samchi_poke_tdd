@@ -2,16 +2,15 @@ package com.samchi.poke.kanghwi.pagingsource
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.samchi.poke.kanghwi.LocalDataSource
+import com.samchi.poke.kanghwi.model.Pokemon
 import com.samchi.poke.kanghwi.toModel
-import com.samchi.poke.model.Pokemon
 import com.samchi.poke.network.PokeApi
-import javax.inject.Inject
-import javax.inject.Singleton
 
 
-@Singleton
-class PokemonPagingSource @Inject constructor(
-    private val api: PokeApi
+class PokemonPagingSource(
+    private val api: PokeApi,
+    private val localDataSource: LocalDataSource
 ) : PagingSource<Int, Pokemon>() {
 
     private var previousPage: Int = 0
@@ -19,22 +18,33 @@ class PokemonPagingSource @Inject constructor(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Pokemon> =
         try {
             val page = params.key ?: START_KEY
-            val result = api.getPokemonList(limit = params.loadSize, offset = page)
+            val response = api.getPokemonList(limit = params.loadSize, offset = page)
 
-            val previous = when {
-                page == START_KEY || result.previous == null -> null
-                else -> previousPage
+            val models = response.toModel().results
+            val entities = localDataSource.getPokemonList()
+
+            val result = models.fold(mutableListOf<Pokemon>()) { acc, model ->
+
+                acc.add(
+                    entities.find { entity -> model.name == entity.name } ?: model
+                )
+
+                acc
             }
 
-            val next = when (result.next) {
+            val previous = when {
+                page == START_KEY || response.previous == null -> null
+                else -> previousPage
+            }
+                .also { previousPage = page }
+
+            val next = when (response.next) {
                 null -> null
                 else -> page + params.loadSize
             }
 
-            previousPage = page
-
             LoadResult.Page(
-                data = result.toModel().results,
+                data = result,
                 prevKey = previous,
                 nextKey = next
             )
