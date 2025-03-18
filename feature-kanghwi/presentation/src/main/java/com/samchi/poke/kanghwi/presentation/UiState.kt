@@ -1,6 +1,6 @@
 package com.samchi.poke.kanghwi.presentation
 
-import com.samchi.poke.model.Pokemon
+import com.samchi.poke.kanghwi.model.Pokemon
 
 
 internal sealed class UiState {

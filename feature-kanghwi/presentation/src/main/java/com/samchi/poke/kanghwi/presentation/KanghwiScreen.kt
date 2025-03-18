@@ -31,7 +31,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil3.compose.AsyncImage
-import com.samchi.poke.model.Pokemon
+import com.samchi.poke.kanghwi.model.Pokemon
 
 
 @Composable

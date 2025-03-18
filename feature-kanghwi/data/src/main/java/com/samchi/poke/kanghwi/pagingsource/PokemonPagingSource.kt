@@ -3,8 +3,8 @@ package com.samchi.poke.kanghwi.pagingsource
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.samchi.poke.kanghwi.LocalDataSource
+import com.samchi.poke.kanghwi.model.Pokemon
 import com.samchi.poke.kanghwi.toModel
-import com.samchi.poke.model.Pokemon
 import com.samchi.poke.network.PokeApi
 
 

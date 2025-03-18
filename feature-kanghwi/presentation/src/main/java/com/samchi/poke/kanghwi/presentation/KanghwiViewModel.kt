@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.cachedIn
 import com.samchi.poke.kanghwi.LocalDataSource
-import com.samchi.poke.model.Pokemon
+import com.samchi.poke.kanghwi.model.Pokemon
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow

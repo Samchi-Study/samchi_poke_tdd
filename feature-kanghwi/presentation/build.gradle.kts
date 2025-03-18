@@ -12,7 +12,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":model"))
+    implementation(project(":feature-kanghwi:model"))
     implementation(project(":feature-kanghwi:data"))
     implementation(project(":common"))
 
