@@ -2,6 +2,7 @@ package com.samchi.feature.sanghyeong.ui.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,16 +15,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.samchi.feature.sanghyeong.R
-import com.samchi.poke.model.Pokemon
+import com.samchi.feature.sanghyeong.model.SangHyeongPokemon
 
 @Composable
-internal fun PokemonItem(pokemon: Pokemon) {
+internal fun PokemonItem(
+    pokemon: SangHyeongPokemon,
+    onFavoriteClick: (SangHyeongPokemon) -> Unit,
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -48,8 +51,18 @@ internal fun PokemonItem(pokemon: Pokemon) {
         )
 
         Image(
-            modifier = Modifier.size(24.dp),
-            painter = painterResource(id = R.drawable.ic_favorite_border),
+            modifier = Modifier
+                .size(24.dp)
+                .clickable {
+                    onFavoriteClick.invoke(pokemon)
+                },
+            painter = painterResource(
+                id = if (pokemon.isFavorite) {
+                    R.drawable.ic_favorite_filled
+                } else {
+                    R.drawable.ic_favorite_border
+                }
+            ),
             contentDescription = null,
         )
     }
@@ -58,5 +71,12 @@ internal fun PokemonItem(pokemon: Pokemon) {
 @Preview
 @Composable
 private fun PokemonItemPreview() {
-    PokemonItem(pokemon = Pokemon(name = "test", url = ""))
+    PokemonItem(
+        pokemon = SangHyeongPokemon(
+            name = "test",
+            url = "",
+            isFavorite = false,
+        ),
+        onFavoriteClick = { },
+    )
 }

@@ -5,8 +5,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "SangHyeongPokemonTable")
 data class SangHyeongPokemonEntity(
-    @PrimaryKey val id: Int,
-    val name: String,
+    @PrimaryKey val name: String,
     val url: String,
     val isFavorite: Boolean,
 )

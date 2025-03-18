@@ -5,12 +5,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.samchi.feature.sanghyeong.model.SangHyeongPokemon
 import com.samchi.poke.model.Pokemon
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 internal fun SangHyeongScreen(
-    pokemonList: ImmutableList<Pokemon>,
+    pokemonList: ImmutableList<SangHyeongPokemon>,
     uiState: SangHyeongUiState,
     uiActions: SangHyeongUiActions,
 ) {
@@ -28,6 +29,7 @@ internal fun SangHyeongScreen(
                 pokemonList = pokemonList,
                 loading = uiState.loading,
                 onBottomReached = uiActions::onLoadMore,
+                onFavoriteClick = uiActions::onFavoriteClick,
             )
         }
     }

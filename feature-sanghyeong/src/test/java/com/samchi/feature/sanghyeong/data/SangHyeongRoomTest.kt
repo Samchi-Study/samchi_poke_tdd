@@ -40,7 +40,6 @@ class SangHyeongRoomTest {
     fun `피카츄 entity를 database에 추가하기`() {
         runTest {
             val pikachuEntity = SangHyeongPokemonEntity(
-                id = 1,
                 name = "Pikachu",
                 url = "",
                 isFavorite = true,
@@ -49,6 +48,7 @@ class SangHyeongRoomTest {
 
             val pokemonList = dao.getPokemonList()
             assertEquals(pokemonList.size, 1)
+            assertEquals(pokemonList.firstOrNull()?.name, pikachuEntity.name)
         }
     }
 
@@ -57,7 +57,6 @@ class SangHyeongRoomTest {
     fun `피카츄 entity를 database에서 삭제하기`() {
         runTest {
             val pikachuEntity = SangHyeongPokemonEntity(
-                id = 1,
                 name = "Pikachu",
                 url = "",
                 isFavorite = true,
@@ -66,7 +65,7 @@ class SangHyeongRoomTest {
             dao.insertPokemon(entity = pikachuEntity)
 
             assertEquals(dao.getPokemonList().size, 1)
-            assertEquals(dao.getPokemon(id = 1).name, pikachuEntity.name)
+            assertEquals(dao.getPokemonList().firstOrNull()?.name, pikachuEntity.name)
 
             // 피카츄 Entity 삭제
             dao.deletePokemon(entity = pikachuEntity)
@@ -80,7 +79,6 @@ class SangHyeongRoomTest {
     fun `id로 database에서 특정 entity 삭제하기`() {
         runTest {
             val pikachuEntity = SangHyeongPokemonEntity(
-                id = 1,
                 name = "Pikachu",
                 url = "",
                 isFavorite = true,
@@ -89,10 +87,10 @@ class SangHyeongRoomTest {
             dao.insertPokemon(entity = pikachuEntity)
 
             assertEquals(dao.getPokemonList().size, 1)
-            assertEquals(dao.getPokemon(id = 1).name, pikachuEntity.name)
+            assertEquals(dao.getPokemonList().firstOrNull()?.name, pikachuEntity.name)
 
             // 피카츄 Entity 삭제
-            dao.deletePokemonById(id = pikachuEntity.id)
+            dao.deletePokemonByName(name = pikachuEntity.name)
 
             assertEquals(dao.getPokemonList().size, 0)
         }
