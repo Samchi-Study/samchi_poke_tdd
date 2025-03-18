@@ -13,8 +13,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import coil3.compose.AsyncImage
 import com.samchi.poke.model.Pokemon
 
 @Composable
@@ -23,19 +26,20 @@ internal fun PokemonItem(pokemon: Pokemon) {
         modifier = Modifier
             .fillMaxWidth()
             .background(color = Color.LightGray, shape = RoundedCornerShape(size = 20.dp))
-            .padding(all = 50.dp),
+            .padding(all = 25.dp),
         horizontalArrangement = Arrangement.spacedBy(space = 20.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        // TODO - 포켓몬 이미지 자리. 정원님 PR 머지되면 coil 사용해서 로드하기.
-        Box(
-            modifier = Modifier
-                .size(100.dp)
-                .background(color = Color.Yellow)
+        AsyncImage(
+            modifier = Modifier.size(150.dp),
+            model = pokemon.getImageUrl(),
+            contentDescription = null
         )
 
         Text(
-            text = pokemon.name
+            text = pokemon.name,
+            fontWeight = FontWeight.W400,
+            fontSize = 16.sp,
         )
     }
 }

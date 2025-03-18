@@ -14,10 +14,12 @@ import androidx.compose.ui.unit.dp
 import com.samchi.feature.sanghyeong.ui.component.PokemonItem
 import com.samchi.feature.sanghyeong.ui.extension.OnBottomReached
 import com.samchi.poke.model.Pokemon
+import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 internal fun SangHyeongSuccessScreen(
-    pokemonList: List<Pokemon>,
+    pokemonList: ImmutableList<Pokemon>,
+    loading: Boolean = false,
     onBottomReached: () -> Unit,
 ) {
     val lazyListState = rememberLazyListState()
@@ -32,5 +34,9 @@ internal fun SangHyeongSuccessScreen(
         items(items = pokemonList) { pokemon ->
             PokemonItem(pokemon = pokemon)
         }
+    }
+
+    if (loading) {
+        SangHyeongLoadingScreen()
     }
 }
