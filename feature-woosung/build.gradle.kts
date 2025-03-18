@@ -19,4 +19,6 @@ dependencies{
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.paging3)
     implementation(libs.paging3.compose)
+    testImplementation(libs.paging.test.android)
+    implementation(libs.test.mockk)
 }
