@@ -20,7 +20,7 @@ interface WoosungDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPokemonList(list: List<PokemonEntity>)
-
+    
     @Update
     suspend fun updatePokemon(entity: PokemonEntity)
 
