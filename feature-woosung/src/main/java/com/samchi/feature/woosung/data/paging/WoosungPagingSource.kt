@@ -7,7 +7,7 @@ import com.samchi.poke.model.Pokemon
 import retrofit2.HttpException
 import java.io.IOException
 
-class WoosungPagingSource internal constructor(
+internal class WoosungPagingSource internal constructor(
     private val woosungPokeRemoteDataSource: WoosungPokeRemoteDataSource
 ) : PagingSource<Int, Pokemon>() {
 
