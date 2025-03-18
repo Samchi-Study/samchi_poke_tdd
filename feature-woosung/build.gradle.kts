@@ -21,4 +21,8 @@ dependencies{
     implementation(libs.paging3.compose)
     testImplementation(libs.paging.test.android)
     implementation(libs.test.mockk)
+
+    implementation(libs.room.ktx)
+    implementation(libs.room.runtime)
+    ksp(libs.room.compiler)
 }

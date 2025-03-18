@@ -1,4 +1,4 @@
-package com.samchi.feature.woosung.data.datasource
+package com.samchi.feature.woosung.data.remote
 
 import com.samchi.poke.network.PokeApi
 import javax.inject.Inject
