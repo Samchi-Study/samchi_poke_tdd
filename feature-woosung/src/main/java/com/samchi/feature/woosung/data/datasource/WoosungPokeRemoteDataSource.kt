@@ -4,10 +4,10 @@ import com.samchi.poke.network.PokeApi
 import javax.inject.Inject
 
 
-internal class WoosungPokeRemoteDataSourceImp @Inject constructor(
+internal class WoosungPokeRemoteDataSource @Inject constructor(
     private val pokeApi : PokeApi
 ){
 
-    suspend fun getPokemonList() = pokeApi.getPokemonList()
+    suspend fun getPokemonList(page : Int) = pokeApi.getPokemonList(offset = page)
 
 }

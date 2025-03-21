@@ -1,19 +1,26 @@
 package com.samchi.feature.woosung.data.repository
 
-import com.samchi.feature.woosung.data.datasource.WoosungPokeRemoteDataSourceImp
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import com.samchi.feature.woosung.data.datasource.WoosungPokeRemoteDataSource
+import com.samchi.feature.woosung.data.paging.WoosungPagingSource
 import com.samchi.poke.model.Pokemon
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 
 internal class WoosungPokeRepositoryImp @Inject constructor(
-    private val pokeRemoteDataSource: WoosungPokeRemoteDataSourceImp
+    private val woosungPokeRemoteDataSource: WoosungPokeRemoteDataSource
 ) : WoosungPokeRepository {
 
-    override suspend fun getPokemonList() = pokeRemoteDataSource.getPokemonList().results.map {
-        Pokemon(
-            name = it.name,
-            url = it.url
-        )
+    override fun getPokemonList(): Flow<PagingData<Pokemon>> {
+        return Pager(
+            config = PagingConfig(pageSize = 30, prefetchDistance = 2),
+            pagingSourceFactory = {
+                WoosungPagingSource(woosungPokeRemoteDataSource)
+            }
+        ).flow
     }
 
 }
