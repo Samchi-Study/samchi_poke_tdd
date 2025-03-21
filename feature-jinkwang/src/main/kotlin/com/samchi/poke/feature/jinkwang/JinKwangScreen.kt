@@ -1,5 +1,6 @@
 package com.samchi.poke.feature.jinkwang
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -14,8 +15,12 @@ import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -23,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -72,7 +78,12 @@ private fun JinKwangScreen(
             JinKwangUiState.Loading -> loading()
             is JinKwangUiState.Success -> {
                 items(uiState.pokemonList) { pokemon ->
-                    Pokemon(pokemon)
+                    Pokemon(
+                        pokemon = pokemon,
+                        onClickFavorite = {
+                            uiState.onClickFavorite(pokemon)
+                        }
+                    )
                 }
                 if (uiState.isEndOfPage.not() && uiState.isError.not()) {
                     loading()
@@ -129,18 +140,36 @@ private fun LazyGridScope.error(
 @Composable
 private fun Pokemon(
     pokemon: Pokemon,
+    onClickFavorite: () -> Unit,
 ) {
     Column(
         modifier = Modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        AsyncImage(
-            model = pokemon.imageUrl,
-            contentDescription = null,
-            modifier = Modifier
-                .aspectRatio(1f)
-                .padding(16.dp)
-        )
+        Box {
+            AsyncImage(
+                model = pokemon.imageUrl,
+                contentDescription = null,
+                modifier = Modifier
+                    .aspectRatio(1f)
+                    .padding(16.dp)
+            )
+
+            Icon(
+                imageVector = if (pokemon.isFavorite) {
+                    Icons.Default.Favorite
+                } else {
+                    Icons.Default.FavoriteBorder
+                },
+                contentDescription = null,
+                modifier = Modifier
+                    .clickable(onClick = onClickFavorite)
+                    .padding(24.dp)
+                    .align(Alignment.BottomEnd),
+                tint = Color.Red
+            )
+        }
+
         Text(text = pokemon.name)
     }
 }
