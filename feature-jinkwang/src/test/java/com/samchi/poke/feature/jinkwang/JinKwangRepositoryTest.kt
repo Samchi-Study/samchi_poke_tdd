@@ -8,6 +8,7 @@ import com.samchi.poke.network.dto.ResponsePokemon
 import com.samchi.poke.network.dto.ResponsePokemonInfo
 import io.mockk.*
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -23,11 +24,11 @@ class JinKwangRepositoryTest {
     fun setup() {
         pokeApi = mockk()
         pokemonDao = mockk()
-        repository =  JinKwangRepositoryImpl(pokeApi, pokemonDao)
+        repository = JinKwangRepositoryImpl(pokeApi, pokemonDao)
     }
 
     @Test
-    fun `getPockemonList함수를 호출했을 때 좋아요 한 상태가 있는 포켓몬 리스트를 리턴한다`() = runBlocking {
+    fun `getPockemonList함수를 호출했을 때 좋아요 한 상태가 있는 포켓몬 리스트를 리턴한다`() = runTest {
         // Given
         val limit = 20
         val offset = 0
@@ -63,7 +64,7 @@ class JinKwangRepositoryTest {
     }
 
     @Test
-    fun `favoritePokemon 함수를 호출했을 때 Dao의 insert가 호출되어 포켓몬 정보를 저장한다`() = runBlocking {
+    fun `favoritePokemon 함수를 호출했을 때 Dao의 insert가 호출되어 포켓몬 정보를 저장한다`() = runTest {
         // Given
         val pokemonName = "Pikachu"
         coEvery { pokemonDao.insert(PokemonEntity(pokemonName)) } just Runs
@@ -76,7 +77,7 @@ class JinKwangRepositoryTest {
     }
 
     @Test
-    fun `unFavoritePokemon 함수를 호출했을 때 Dao의 delete가 호출되어 포켓몬 정보를 제거한다`() = runBlocking {
+    fun `unFavoritePokemon 함수를 호출했을 때 Dao의 delete가 호출되어 포켓몬 정보를 제거한다`() = runTest {
         // Given
         val pokemonName = "Pikachu"
         coEvery { pokemonDao.deletePokemonById(pokemonName) } just Runs
