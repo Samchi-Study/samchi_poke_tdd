@@ -42,19 +42,18 @@ import kotlinx.coroutines.flow.filter
 @Composable
 fun PokemonListScreen(
     uiState: PokemonListUiState,
-    onLoadNext: () -> Unit,
-    onRefresh: () -> Unit,
-    onFavoriteClick: (Pokemon) -> Unit
+    doAction: (PokemonListAction) -> Unit
 ) {
     when (uiState) {
         PokemonListUiState.Initial -> LoadingIndicator()
         PokemonListUiState.Loading -> FooterLoading()
         is PokemonListUiState.Success -> PokemonGridScreen(
             pokemonList = uiState.data.dataList,
-            onLoadNext = onLoadNext,
-            onFavoriteClick = onFavoriteClick
+            onLoadNext = { doAction(PokemonListAction.LoadMore) },
+            onFavoriteClick = { pokemon: Pokemon -> doAction(PokemonListAction.ClickFavorite(pokemon)) }
         )
-        is PokemonListUiState.Error -> FooterError(uiState.message) { onRefresh() }
+
+        is PokemonListUiState.Error -> FooterError(uiState.message) { doAction(PokemonListAction.Refresh) }
     }
 }
 
@@ -175,11 +174,10 @@ private fun PokemonCard(
                         imageVector = if (pokemon.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                         contentDescription = if (pokemon.isFavorite) "Remove from favorites" else "Add to favorites",
                         tint = if (pokemon.isFavorite) Color.Red else MaterialTheme.colorScheme.onSurface
-
                     )
                 }
             }
-            
+
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(pokemon.getImageUrl())
