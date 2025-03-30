@@ -19,52 +19,69 @@ class PokemonListViewModel @Inject constructor(
 ) : ViewModel() {
     private val _uiState: MutableStateFlow<PokemonListUiState> =
         MutableStateFlow(PokemonListUiState.Initial)
-
     val uiState: StateFlow<PokemonListUiState> = _uiState.asStateFlow()
 
     init {
-        loadFirstPage()
+        dispatch(PokemonListAction.Initialize)
     }
 
-    private fun loadFirstPage() {
-        viewModelScope.launch {
-            pokemonRepository.getPokemonPage(20, 0)
-                .handleUiState()
+    fun dispatch(action: PokemonListAction) {
+        when (action) {
+            is PokemonListAction.Initialize -> handleLoadFirstPage()
+            is PokemonListAction.LoadMore -> handleLoadNextPage()
+            is PokemonListAction.Refresh -> handleRefresh()
+            is PokemonListAction.ClickFavorite -> handleToggleFavorite(action.pokemon)
         }
     }
 
-    fun loadNextPage() {
+    private fun handleLoadFirstPage() {
         viewModelScope.launch {
-            val currentState = uiState.value
-            if (currentState is PokemonListUiState.Success) {
-                val currentList = currentState.data.dataList
-                val nextOffset: Int = currentState.data.nextOffset ?: return@launch
-                pokemonRepository.getPokemonPage(offset = nextOffset)
-                    .onSuccess { result ->
-                        val updatedList = currentList + result.dataList
-                        _uiState.update {
-                            PokemonListUiState.Success(data = result.copy(dataList = updatedList))
-                        }
-                    }.onFailure {
-                        _uiState.value = PokemonListUiState.Error("Failed to load next page")
+            _uiState.update { PokemonListUiState.Loading }
+            try {
+                pokemonRepository.getPokemonPage(20, 0)
+                    .onSuccess { pokemonPage ->
+                        _uiState.update { PokemonListUiState.Success(pokemonPage) }
                     }
+                    .onFailure { error ->
+                        _uiState.update { PokemonListUiState.Error(error.message ?: "Unknown Error") }
+                    }
+            } catch (e: Exception) {
+                _uiState.update { PokemonListUiState.Error(e.message ?: "Unknown Error") }
             }
         }
     }
 
-    fun refresh() {
+    private fun handleLoadNextPage() {
         viewModelScope.launch {
-            _uiState.value = PokemonListUiState.Initial
-            loadFirstPage()
+            val currentState = uiState.value
+            if (currentState is PokemonListUiState.Success) {
+                val nextOffset: Int = currentState.data.nextOffset ?: return@launch
+                try {
+                    pokemonRepository.getPokemonPage(offset = nextOffset)
+                        .onSuccess { result ->
+                            val updatedList = currentState.data.dataList + result.dataList
+                            _uiState.update {
+                                PokemonListUiState.Success(data = result.copy(dataList = updatedList))
+                            }
+                        }
+                        .onFailure { error ->
+                            _uiState.update { PokemonListUiState.Error(error.localizedMessage ?: "Failed to load next page") }
+                        }
+                } catch (e: Exception) {
+                    _uiState.update { PokemonListUiState.Error("Failed to load next page") }
+                }
+            }
         }
     }
 
-    private fun Result<PokemonPage>.handleUiState() {
-        this.onSuccess { _uiState.value = PokemonListUiState.Success(it) }
-            .onFailure { _uiState.value = PokemonListUiState.Error(it.message ?: "UnKnown Error") }
+    private fun handleRefresh() {
+        viewModelScope.launch {
+            _uiState.update { PokemonListUiState.Initial }
+            handleLoadFirstPage()
+        }
     }
 
-    fun toggleFavorite(pokemon: Pokemon) {
+    private fun handleToggleFavorite(pokemon: Pokemon) {
         viewModelScope.launch {
             pokemonRepository.toggleFavorite(pokemon)
         }
