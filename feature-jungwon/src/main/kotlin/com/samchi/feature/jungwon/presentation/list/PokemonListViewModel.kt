@@ -38,19 +38,15 @@ class PokemonListViewModel @Inject constructor(
             if (currentState is PokemonListUiState.Success) {
                 val currentList = currentState.data.dataList
                 val nextOffset: Int = currentState.data.nextOffset ?: return@launch
-                val result: Result<PokemonPage> = pokemonRepository.getPokemonPage(offset = nextOffset)
-
-                if (result.isSuccess) {
-                    val newPage = result.getOrNull()
-                    if (newPage != null) {
-                        val updatedList = currentList + newPage.dataList
+                pokemonRepository.getPokemonPage(offset = nextOffset)
+                    .onSuccess { result ->
+                        val updatedList = currentList + result.dataList
                         _uiState.update {
-                            PokemonListUiState.Success(data = newPage.copy(dataList = updatedList))
+                            PokemonListUiState.Success(data = result.copy(dataList = updatedList))
                         }
+                    }.onFailure {
+                        _uiState.value = PokemonListUiState.Error("Failed to load next page")
                     }
-                } else {
-                    _uiState.value = PokemonListUiState.Error("Failed to load next page")
-                }
             }
         }
     }
