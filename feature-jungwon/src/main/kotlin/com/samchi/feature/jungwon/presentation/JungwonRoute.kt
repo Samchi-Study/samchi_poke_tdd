@@ -8,5 +8,5 @@ import com.samchi.feature.jungwon.presentation.list.PokemonListScreen
 fun JungwonRoute(
     modifier: Modifier = Modifier
 ) {
-    PokemonListScreen(modifier)
+    PokemonListScreen()
 }
