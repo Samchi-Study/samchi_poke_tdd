@@ -33,15 +33,12 @@ class PokemonPagingSource(
             }
 
             val previous = when {
-                page == START_KEY || response.previous == null -> null
-                else -> previousPage
+                page == START_KEY -> null
+                else -> response.previous?.let { lastKey(it) }
             }
                 .also { previousPage = page }
 
-            val next = when (response.next) {
-                null -> null
-                else -> page + params.loadSize
-            }
+            val next = response.next?.let { lastKey(it) }
 
             LoadResult.Page(
                 data = result,
@@ -65,6 +62,9 @@ class PokemonPagingSource(
             else -> START_KEY
         }
     }
+
+    fun lastKey(url: String) =
+        "offset=\\d+".toRegex().find(url)?.value?.split("=")?.last()?.toInt() ?: 0
 
 
     companion object {

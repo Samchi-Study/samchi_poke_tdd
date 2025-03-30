@@ -40,9 +40,7 @@ class PagingSourceTest {
 
     private val config = PagingConfig(
         pageSize = pageSize,
-        enablePlaceholders = true,
-        maxSize = pageSize * 4,
-        initialLoadSize = pageSize * 3
+        enablePlaceholders = true
     )
 
 
@@ -80,8 +78,8 @@ class PagingSourceTest {
         } answers {
             ResponsePokemonInfo(
                 count = 1000,
-                next = "https://pokeapi.co/api/v2/pokemon?offset=4&limit=1",
-                previous = "https://pokeapi.co/api/v2/pokemon?offset=3&limit=1",
+                next = "https://pokeapi.co/api/v2/pokemon?offset=6&limit=6",
+                previous = null,
                 results = mockList
             )
         }
@@ -122,8 +120,8 @@ class PagingSourceTest {
         } coAnswers {
             ResponsePokemonInfo(
                 count = 1000,
-                next = "https://pokeapi.co/api/v2/pokemon?offset=4&limit=1",
-                previous = "https://pokeapi.co/api/v2/pokemon?offset=3&limit=1",
+                next = "https://pokeapi.co/api/v2/pokemon?offset=6&limit=6",
+                previous = null,
                 results = listOf(
                     ResponsePokemon(
                         name = "bulbasaur",
@@ -158,20 +156,53 @@ class PagingSourceTest {
         } answers {
             ResponsePokemonInfo(
                 count = 1000,
-                next = "https://pokeapi.co/api/v2/pokemon?offset=4&limit=1",
-                previous = "https://pokeapi.co/api/v2/pokemon?offset=3&limit=1",
+                next = "https://pokeapi.co/api/v2/pokemon?offset=8&limit=$pageSize",
+                previous = "https://pokeapi.co/api/v2/pokemon?offset=4&limit=$pageSize",
                 results = listOf(
                     ResponsePokemon(
                         name = "bulbasaur",
-                        url = "https://pokeapi.co/api/v2/pokemon/6/"
+                        url = "https://pokeapi.co/api/v2/pokemon/7/"
                     ),
                     ResponsePokemon(
                         name = "ivysaur",
-                        url = "https://pokeapi.co/api/v2/pokemon/7/"
+                        url = "https://pokeapi.co/api/v2/pokemon/8/"
+                    )
+                )
+            )
+        } andThenAnswer {
+            ResponsePokemonInfo(
+                count = 1000,
+                next = "https://pokeapi.co/api/v2/pokemon?offset=10&limit=$pageSize",
+                previous = "https://pokeapi.co/api/v2/pokemon?offset=6&limit=$pageSize",
+                results = listOf(
+                    ResponsePokemon(
+                        name = "bulbasaur",
+                        url = "https://pokeapi.co/api/v2/pokemon/9/"
+                    ),
+                    ResponsePokemon(
+                        name = "ivysaur",
+                        url = "https://pokeapi.co/api/v2/pokemon/10/"
+                    )
+                )
+            )
+        } andThenAnswer {
+            ResponsePokemonInfo(
+                count = 1000,
+                next = "https://pokeapi.co/api/v2/pokemon?offset=12&limit=$pageSize",
+                previous = "https://pokeapi.co/api/v2/pokemon?offset=8&limit=$pageSize",
+                results = listOf(
+                    ResponsePokemon(
+                        name = "bulbasaur",
+                        url = "https://pokeapi.co/api/v2/pokemon/11/"
+                    ),
+                    ResponsePokemon(
+                        name = "ivysaur",
+                        url = "https://pokeapi.co/api/v2/pokemon/12/"
                     )
                 )
             )
         }
+
 
         coEvery {
             localDataSource.getPokemonList()
@@ -191,27 +222,27 @@ class PagingSourceTest {
 
         val p1 = pager.refresh() as PagingSource.LoadResult.Page
 
-        assertEquals(p1.data.size, 6)
-        assertEquals(p1.prevKey, null)
-        assertEquals(p1.nextKey, 6)
+        assertEquals(6, p1.data.size)
+        assertEquals(null, p1.prevKey)
+        assertEquals(6, p1.nextKey)
 
         val p2 = pager.append() as PagingSource.LoadResult.Page
 
-        assertEquals(p2.data.size, 2)
-        assertEquals(p2.prevKey, 0)
-        assertEquals(p2.nextKey, 8)
+        assertEquals(2, p2.data.size)
+        assertEquals(4, p2.prevKey)
+        assertEquals(8, p2.nextKey)
 
         val p3 = pager.append() as PagingSource.LoadResult.Page
 
-        assertEquals(p3.data.size, 2)
-        assertEquals(p3.prevKey, 6)
-        assertEquals(p3.nextKey, 10)
+        assertEquals(2, p3.data.size)
+        assertEquals(6, p3.prevKey)
+        assertEquals(10, p3.nextKey)
 
         val p4 = pager.append() as PagingSource.LoadResult.Page
 
-        assertEquals(p4.data.size, 2)
-        assertEquals(p4.prevKey, 8)
-        assertEquals(p4.nextKey, 12)
+        assertEquals(2, p4.data.size)
+        assertEquals(8, p4.prevKey)
+        assertEquals(12, p4.nextKey)
 
         coVerify {
             pokeApi.getPokemonList(any(), any())
@@ -225,8 +256,8 @@ class PagingSourceTest {
         } coAnswers {
             ResponsePokemonInfo(
                 count = 1000,
-                next = "https://pokeapi.co/api/v2/pokemon?offset=4&limit=1",
-                previous = "https://pokeapi.co/api/v2/pokemon?offset=3&limit=1",
+                next = "https://pokeapi.co/api/v2/pokemon?offset=6&limit=6",
+                previous = null,
                 results = listOf(
                     ResponsePokemon(
                         name = "bulbasaur",
@@ -261,16 +292,16 @@ class PagingSourceTest {
         } answers {
             ResponsePokemonInfo(
                 count = 1000,
-                next = "https://pokeapi.co/api/v2/pokemon?offset=4&limit=1",
-                previous = "https://pokeapi.co/api/v2/pokemon?offset=3&limit=1",
+                next = "https://pokeapi.co/api/v2/pokemon?offset=8&limit=$pageSize",
+                previous = "https://pokeapi.co/api/v2/pokemon?offset=4&limit=$pageSize",
                 results = listOf(
                     ResponsePokemon(
                         name = "bulbasaur",
-                        url = "https://pokeapi.co/api/v2/pokemon/6/"
+                        url = "https://pokeapi.co/api/v2/pokemon/7/"
                     ),
                     ResponsePokemon(
                         name = "ivysaur",
-                        url = "https://pokeapi.co/api/v2/pokemon/7/"
+                        url = "https://pokeapi.co/api/v2/pokemon/8/"
                     )
                 )
             )
@@ -294,15 +325,15 @@ class PagingSourceTest {
 
         val p1 = pager.refresh() as PagingSource.LoadResult.Page
 
-        assertEquals(p1.data.size, 6)
-        assertEquals(p1.prevKey, null)
-        assertEquals(p1.nextKey, 6)
+        assertEquals(6, p1.data.size)
+        assertEquals(null, p1.prevKey)
+        assertEquals(6, p1.nextKey)
 
         val p2 = pager.append() as PagingSource.LoadResult.Page
 
-        assertEquals(p2.data.size, 2)
-        assertEquals(p2.prevKey, 0)
-        assertEquals(p2.nextKey, 8)
+        assertEquals(2, p2.data.size)
+        assertEquals(4, p2.prevKey)
+        assertEquals(8, p2.nextKey)
 
         val key = source.getRefreshKey(pager.getPagingState(7))
 
