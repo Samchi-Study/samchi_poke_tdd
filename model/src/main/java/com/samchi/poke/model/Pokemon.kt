@@ -3,7 +3,8 @@ package com.samchi.poke.model
 
 data class Pokemon(
     val name: String,
-    private val url: String
+    private val url: String,
+    val isFavorite: Boolean = false
 ) {
 
     fun getImageUrl(): String {
@@ -11,7 +12,4 @@ data class Pokemon(
         return "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/" +
             "pokemon/other/official-artwork/$index.png"
     }
-
-    val id: String
-        get() = url.split("/").dropLast(1).last()
 }

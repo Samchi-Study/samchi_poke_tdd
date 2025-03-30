@@ -5,7 +5,6 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import com.samchi.feature.jungwon.data.model.PokemonPage
-import com.samchi.feature.jungwon.data.model.toPokemonPage
 import com.samchi.poke.model.Pokemon
 import com.samchi.poke.network.PokeApi
 import com.samchi.poke.network.dto.ResponsePokemonInfo
@@ -21,33 +20,45 @@ class PokemonRepositoryImpl @Inject constructor(
     override suspend fun getPokemonPage(limit: Int, offset: Int): Result<PokemonPage> {
         return runCatching {
             val response: ResponsePokemonInfo = pokeApi.getPokemonList(limit, offset)
-            response.toPokemonPage()
+            val favoriteIds = dataStore.data.first()[FAVORITE_POKEMON_NAMES] ?: emptySet()
+            
+            PokemonPage(
+                nextUrl = response.next,
+                previousUrl = response.previous,
+                dataList = response.results.map { responsePokemon ->
+                    Pokemon(
+                        name = responsePokemon.name,
+                        url = responsePokemon.url,
+                        isFavorite = responsePokemon.name in favoriteIds
+                    )
+                }
+            )
         }
     }
 
     override suspend fun toggleFavorite(pokemon: Pokemon) {
         dataStore.edit { preferences ->
-            val currentIds = preferences[FAVORITE_POKEMON_IDS] ?: emptySet()
-            val pokemonId = pokemon.id
-            
-            preferences[FAVORITE_POKEMON_IDS] = if (pokemonId in currentIds) {
-                currentIds - pokemonId
+            val currentNames = preferences[FAVORITE_POKEMON_NAMES] ?: emptySet()
+            val pokemonName = pokemon.name
+
+            preferences[FAVORITE_POKEMON_NAMES] = if (pokemonName in currentNames) {
+                currentNames - pokemonName
             } else {
-                currentIds + pokemonId
+                currentNames + pokemonName
             }
         }
     }
 
     override fun getFavoritePokemonIds(): Flow<Set<String>> = 
         dataStore.data.map { preferences ->
-            preferences[FAVORITE_POKEMON_IDS] ?: emptySet()
+            preferences[FAVORITE_POKEMON_NAMES] ?: emptySet()
         }
 
     override suspend fun isFavorite(pokemon: Pokemon): Boolean {
-        return dataStore.data.first()[FAVORITE_POKEMON_IDS]?.contains(pokemon.id) ?: false
+        return dataStore.data.first()[FAVORITE_POKEMON_NAMES]?.contains(pokemon.name) ?: false
     }
 
     companion object {
-        private val FAVORITE_POKEMON_IDS = stringSetPreferencesKey("favorite_pokemon_ids")
+        private val FAVORITE_POKEMON_NAMES = stringSetPreferencesKey("favorite_pokemon_names")
     }
 }
