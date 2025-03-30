@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.samchi.feature.jungwon.data.model.PokemonPage
 import com.samchi.feature.jungwon.data.repository.PokemonRepository
+import com.samchi.poke.model.Pokemon
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -61,5 +62,11 @@ class PokemonListViewModel @Inject constructor(
     private fun Result<PokemonPage>.handleUiState() {
         this.onSuccess { _uiState.value = PokemonListUiState.Success(it) }
             .onFailure { _uiState.value = PokemonListUiState.Error(it.message ?: "UnKnown Error") }
+    }
+
+    fun toggleFavorite(pokemon: Pokemon) {
+        viewModelScope.launch {
+            pokemonRepository.toggleFavorite(pokemon)
+        }
     }
 }

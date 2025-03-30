@@ -18,19 +18,3 @@ data class PokemonPage(
             Regex("offset=(\\d+)").find(url)?.groupValues?.get(1)?.toIntOrNull()
         }
 }
-
-/*
-* TODO: ResponsePokemonInfo 에 next, previous 정보를 추가해서 PokemonPage 정보를 제거 작업 필요
-* */
-fun ResponsePokemonInfo.toPokemonPage(): PokemonPage {
-    return PokemonPage(
-        nextUrl = next,
-        previousUrl = previous,
-        dataList = results.map {
-            Pokemon(
-                name = it.name,
-                url = it.url
-            )
-        }
-    )
-}

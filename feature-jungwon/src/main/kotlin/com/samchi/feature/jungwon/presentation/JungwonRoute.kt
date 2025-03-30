@@ -17,6 +17,7 @@ fun JungwonRoute(
     PokemonListScreen(
         uiState = uiState,
         onLoadNext = viewModel::loadNextPage,
-        onRefresh = viewModel::refresh
+        onRefresh = viewModel::refresh,
+        onFavoriteClick = viewModel::toggleFavorite
     )
 }
