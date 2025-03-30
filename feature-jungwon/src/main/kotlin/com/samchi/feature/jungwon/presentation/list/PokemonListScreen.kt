@@ -36,7 +36,6 @@ import kotlinx.coroutines.flow.filter
 
 @Composable
 fun PokemonListScreen(
-    modifier: Modifier,
     viewModel: PokemonListViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()

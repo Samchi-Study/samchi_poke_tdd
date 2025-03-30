@@ -10,5 +10,5 @@ fun JungwonRoute(
     modifier: Modifier = Modifier,
     viewModel: PokemonListViewModel = hiltViewModel()
 ) {
-    PokemonListScreen(modifier)
+    PokemonListScreen()
 }
