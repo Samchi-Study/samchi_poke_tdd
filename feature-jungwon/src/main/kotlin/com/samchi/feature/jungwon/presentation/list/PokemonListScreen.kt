@@ -18,39 +18,40 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.samchi.feature.jungwon.data.model.PokemonPage
 import com.samchi.poke.model.Pokemon
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 
 @Composable
 fun PokemonListScreen(
-    viewModel: PokemonListViewModel = hiltViewModel()
+    uiState: PokemonListUiState,
+    onLoadNext: () -> Unit,
+    onRefresh: ()->Unit
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     when (uiState) {
         PokemonListUiState.Initial -> LoadingIndicator()
         PokemonListUiState.Loading -> FooterLoading()
         is PokemonListUiState.Success -> PokemonGridScreen(
-            (uiState as PokemonListUiState.Success).data.dataList,
-            viewModel::loadNextPage
+            uiState.data.dataList,
+            onLoadNext
         )
 
-        is PokemonListUiState.Error -> FooterError((uiState as PokemonListUiState.Error).message) { viewModel.refresh() }
+        is PokemonListUiState.Error -> FooterError(uiState.message) { onRefresh() }
     }
 }
+
+private const val THRESHOLD = 6
 
 @Composable
 private fun PokemonGridScreen(
@@ -60,12 +61,17 @@ private fun PokemonGridScreen(
     val gridState = rememberLazyGridState()
     LaunchedEffect(gridState) {
         snapshotFlow {
-            gridState.layoutInfo
-        }.filter { layoutInfo ->
-            layoutInfo.visibleItemsInfo.lastOrNull()?.index == pokemonList.lastIndex
-        }.collect {
-            onLoadNext()
-        }
+            val layoutInfo = gridState.layoutInfo
+            val totalItems = layoutInfo.totalItemsCount
+            val lastVisibleItem = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
+
+            // 마지막 아이템까지의 거리가 THRESHOLD 이하일 때 다음 페이지 로드
+            lastVisibleItem >= (totalItems - THRESHOLD)
+        }.distinctUntilChanged() // 중복 이벤트 방지
+            .filter { it } // true인 경우만 처리
+            .collect {
+                onLoadNext()
+            }
     }
 
     LazyVerticalGrid(
