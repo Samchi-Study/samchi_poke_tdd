@@ -13,7 +13,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
@@ -23,77 +22,56 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import coil3.compose.AsyncImage
 import com.samchi.poke.feature.jinkwang.data.Pokemon
 
 @Composable
 fun JinKwangRoute() {
     val viewModel: JinKwangViewModel = hiltViewModel()
-
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
+    val items = viewModel.pokemonPaging.collectAsLazyPagingItems()
     JinKwangScreen(
-        uiState = uiState,
-        onLastItemVisible = viewModel::loadPokemonList,
+        pokemonItems = items,
         retry = viewModel::retry,
+        onClickFavorite = viewModel::onClickFavorite
     )
 }
 
 @Composable
 private fun JinKwangScreen(
-    uiState: JinKwangUiState,
-    onLastItemVisible: () -> Unit,
+    pokemonItems: LazyPagingItems<Pokemon>,
+    onClickFavorite: (Pokemon) -> Unit,
     retry: () -> Unit,
 ) {
 
     val gridState = rememberLazyGridState()
 
-    LaunchedEffect(gridState) {
-        snapshotFlow { gridState.layoutInfo }
-            .collect { layoutInfo ->
-                val totalItemsCount = layoutInfo.totalItemsCount
-                val lastVisibleItemIndex = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: -1
-
-                if (lastVisibleItemIndex == totalItemsCount - 1) {
-                    onLastItemVisible()
-                }
-            }
-    }
     LazyVerticalGrid(
         columns = GridCells.Fixed(PokemonColumnCount),
         modifier = Modifier
             .fillMaxSize(),
         state = gridState,
     ) {
-        when (uiState) {
-            JinKwangUiState.Loading -> loading()
-            is JinKwangUiState.Success -> {
-                items(uiState.pokemonList) { pokemon ->
-                    Pokemon(
-                        pokemon = pokemon,
-                        onClickFavorite = {
-                            uiState.onClickFavorite(pokemon)
-                        }
-                    )
-                }
-                if (uiState.isEndOfPage.not() && uiState.isError.not()) {
-                    loading()
-                }
-                if (uiState.isError) {
-                    error(retry)
-                }
+        items(pokemonItems.itemCount) { index ->
+            pokemonItems[index]?.let { pokemon ->
+                Pokemon(
+                    pokemon = pokemon,
+                    onClickFavorite = { onClickFavorite(pokemon) },
+                )
             }
+        }
 
-            is JinKwangUiState.Error -> error(retry)
+        when (pokemonItems.loadState.append) {
+            is LoadState.Loading -> loading()
+            is LoadState.Error -> error(retry)
+            else -> Unit
         }
     }
 }
