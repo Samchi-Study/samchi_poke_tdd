@@ -1,15 +1,44 @@
 package com.samchi.poke.feature.jinkwang.data
 
+import androidx.paging.ExperimentalPagingApi
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.map
+import com.samchi.poke.feature.jinkwang.data.local.favorite.FavoriteDao
+import com.samchi.poke.feature.jinkwang.data.local.favorite.FavoriteEntity
+import com.samchi.poke.feature.jinkwang.data.local.pokemon.PokemonDao
+import com.samchi.poke.feature.jinkwang.data.local.pokemon.PokemonEntity
 import com.samchi.poke.network.PokeApi
 import com.samchi.poke.network.dto.ResponsePokemon
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
 
+@OptIn(ExperimentalPagingApi::class)
 internal class JinKwangRepositoryImpl @Inject constructor(
     private val pokeApi: PokeApi,
     private val pokemonDao: PokemonDao,
+    private val favoriteDao: FavoriteDao,
+    private val pokemonRemoteMediator: PokemonRemoteMediator,
 ) : JinKwangRepository {
 
-    override suspend fun getPockemonList(
+    override fun getPokemonFlow(): Flow<PagingData<PokemonEntity>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = PokemonRemoteMediator.PAGING_SIZE,
+                enablePlaceholders = false
+            ),
+            initialKey = 0,
+            remoteMediator = pokemonRemoteMediator,
+            pagingSourceFactory = { pokemonDao.getPokemonPagingSource() }
+        ).flow.combine(favoriteDao.getFavorites()) { pagingData, favorites ->
+            pagingData.map { pokemon ->
+                pokemon.copy(isFavorite = favorites.any { it.name == pokemon.name }) }
+        }
+    }
+
+    override suspend fun getPokemonList(
         limit: Int,
         offset: Int
     ): Result<List<Pokemon>> = runCatching {
@@ -25,11 +54,12 @@ internal class JinKwangRepositoryImpl @Inject constructor(
     }
 
     override suspend fun favoritePokemon(name: String) {
-        pokemonDao.insert(PokemonEntity(name))
+        favoriteDao.insert(FavoriteEntity(name))
+        pokemonDao.updateFavorite(name, true)
     }
 
     override suspend fun unFavoritePokemon(name: String) {
-        pokemonDao.deletePokemonById(name)
+        pokemonDao.updateFavorite(name, false)
     }
 
     private inline fun ResponsePokemon.toPokemon(
@@ -37,7 +67,7 @@ internal class JinKwangRepositoryImpl @Inject constructor(
     ): Pokemon {
         return Pokemon(
             nameField = name,
-            url = url,
+            imageUrl = url,
             isFavorite = isFavorite(),
         )
     }
