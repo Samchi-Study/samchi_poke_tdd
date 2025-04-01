@@ -1,10 +1,12 @@
-package com.samchi.poke.feature.jinkwang.data
+package com.samchi.poke.feature.jinkwang.data.local.pokemon
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "pokemon")
 internal data class PokemonEntity(
+    @PrimaryKey
     val name: String,
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,    // Pokemon의 고유 ID
+    val url: String,
+    val isFavorite: Boolean,
 )
