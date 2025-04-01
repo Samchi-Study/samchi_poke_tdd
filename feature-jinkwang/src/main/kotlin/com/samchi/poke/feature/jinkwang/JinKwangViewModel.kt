@@ -3,6 +3,7 @@ package com.samchi.poke.feature.jinkwang
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.samchi.poke.feature.jinkwang.data.JinKwangRepository
+import com.samchi.poke.feature.jinkwang.data.Pokemon
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -37,9 +38,12 @@ internal class JinKwangViewModel @Inject constructor(
                 _uiState.update {
                     when (it) {
                         is JinKwangUiState.Loading, is JinKwangUiState.Error ->
-                            JinKwangUiState.Success(pokemonList)
+                            JinKwangUiState.Success(pokemonList, ::onClickFavorite)
 
-                        is JinKwangUiState.Success -> JinKwangUiState.Success(it.pokemonList + pokemonList)
+                        is JinKwangUiState.Success -> JinKwangUiState.Success(
+                            it.pokemonList + pokemonList,
+                            ::onClickFavorite
+                        )
                     }
                 }
                 if (pokemonList.isEmpty()) {
@@ -65,6 +69,31 @@ internal class JinKwangViewModel @Inject constructor(
     fun retry() {
         isLoadingPokemonList.update { false }
         loadPokemonList()
+    }
+
+    private fun onClickFavorite(pokemon: Pokemon) {
+        viewModelScope.launch {
+            val uiState = _uiState.value
+            if (uiState is JinKwangUiState.Success) {
+
+                if (pokemon.isFavorite) {
+                    jinKwangRepository.unFavoritePokemon(pokemon.nameField)
+                } else {
+                    jinKwangRepository.favoritePokemon(pokemon.nameField)
+                }
+
+                val updatedPokemonList = uiState.pokemonList.map {
+                    if (it.name == pokemon.name) {
+                        it.copy(isFavorite = !it.isFavorite)
+                    } else {
+                        it
+                    }
+                }
+                _uiState.update {
+                    uiState.copy(pokemonList = updatedPokemonList)
+                }
+            }
+        }
     }
 
     companion object {
