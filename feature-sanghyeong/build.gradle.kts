@@ -15,4 +15,7 @@ dependencies {
     implementation(project(":network"))
 
     implementation(libs.kotlinx.immutable)
+    implementation(libs.room.ktx)
+    implementation(libs.room.runtime)
+    ksp(libs.room.compiler)
 }
