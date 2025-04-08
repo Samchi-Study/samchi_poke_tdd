@@ -14,6 +14,6 @@ internal abstract class JinKwangDataModule {
     @Binds
     @Singleton
     abstract fun provideJinKwangRepository(
-        jinKwangRepository: JinKwangRepositoryImpl
+        jinKwangRepository: JinKwangRepositoryImpl,
     ): JinKwangRepository
 }

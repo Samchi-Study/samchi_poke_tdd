@@ -6,4 +6,8 @@ internal interface JinKwangRepository {
         limit: Int,
         offset: Int
     ): Result<List<Pokemon>>
+
+    suspend fun favoritePokemon(name: String)
+
+    suspend fun unFavoritePokemon(name: String)
 }
