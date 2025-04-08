@@ -3,7 +3,7 @@ package com.samchi.feature.woosung
 import androidx.paging.PagingConfig
 import androidx.paging.PagingSource
 import androidx.paging.testing.TestPager
-import com.samchi.feature.woosung.data.remote.WoosungPokeRemoteDataSource
+import com.samchi.feature.woosung.data.datasource.WoosungPokeRemoteDataSource
 import com.samchi.feature.woosung.data.paging.WoosungPagingSource
 import com.samchi.feature.woosung.mapper.toPokemon
 import com.samchi.poke.network.dto.ResponsePokemon

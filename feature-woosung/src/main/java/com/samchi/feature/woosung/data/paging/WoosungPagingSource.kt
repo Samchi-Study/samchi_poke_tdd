@@ -2,7 +2,7 @@ package com.samchi.feature.woosung.data.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.samchi.feature.woosung.data.remote.WoosungPokeRemoteDataSource
+import com.samchi.feature.woosung.data.datasource.WoosungPokeRemoteDataSource
 import com.samchi.poke.model.Pokemon
 import retrofit2.HttpException
 import java.io.IOException
