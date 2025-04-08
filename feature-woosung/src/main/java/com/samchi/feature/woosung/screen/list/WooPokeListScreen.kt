@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
@@ -18,7 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -28,7 +26,8 @@ import com.samchi.poke.model.PokemonInfo
 
 @Composable
 fun WoosungRoute(
-    modifier: Modifier = Modifier, viewmodel: WooPokeListViewModel = hiltViewModel()
+    modifier: Modifier = Modifier,
+    viewmodel: WooPokeListViewModel = hiltViewModel()
 ): Unit {
     val pokemonPagingItems: LazyPagingItems<Pokemon> =
         viewmodel.pagingList.collectAsLazyPagingItems()
@@ -39,7 +38,8 @@ fun WoosungRoute(
 
 @Composable
 internal fun WooPokeListScreen(
-    pokemonPaging: LazyPagingItems<Pokemon>, onRetryClicked: () -> Unit = {}
+    pokemonPaging: LazyPagingItems<Pokemon>,
+    onRetryClicked: () -> Unit = {}
 ): Unit {
 
     LazyVerticalGrid(
@@ -106,7 +106,8 @@ object PokemonTest {
 @Preview
 @Composable
 private fun NetworkFail(
-    modifier: Modifier = Modifier, onRetryClicked: () -> Unit = {}
+    modifier: Modifier = Modifier,
+    onRetryClicked: () -> Unit = {}
 ): Unit {
     Box(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.align(Alignment.Center)) {
