@@ -13,14 +13,14 @@ import com.samchi.feature.woosung.data.entity.PokemonEntity
 interface WoosungDao {
 
     @Query("SELECT * FROM WSPokemon WHERE id =:id ")
-    suspend fun getPokemon(id: Int): PokemonEntity
+    suspend fun getPokemon(id: Int): PokemonEntity?
 
     @Insert
     suspend fun insertPokemon(entity: PokemonEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPokemonList(list: List<PokemonEntity>)
-    
+
     @Update
     suspend fun updatePokemon(entity: PokemonEntity)
 
