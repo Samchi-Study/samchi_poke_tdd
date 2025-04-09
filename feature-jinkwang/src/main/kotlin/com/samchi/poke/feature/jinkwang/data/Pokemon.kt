@@ -1,8 +1,9 @@
 package com.samchi.poke.feature.jinkwang.data
 
 internal data class Pokemon(
-    private val nameField: String,
-    private val url: String
+    val nameField: String,
+    private val url: String,
+    val isFavorite: Boolean = false,
 ) {
     val name: String
         get() = nameField.replaceFirstChar { it.uppercase() }
