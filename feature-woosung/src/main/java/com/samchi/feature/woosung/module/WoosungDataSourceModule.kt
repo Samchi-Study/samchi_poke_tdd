@@ -1,8 +1,7 @@
 package com.samchi.feature.woosung.module
 
-import com.samchi.feature.woosung.data.datasource.WoosungPokeRemoteDataSourceImp
-import com.samchi.feature.woosung.data.repository.WoosungPokeRepositoryImp
 import com.samchi.poke.network.PokeApi
+import com.samchi.feature.woosung.data.datasource.WoosungPokeRemoteDataSource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,6 +16,6 @@ internal object WoosungDataSourceModule {
     @Singleton
     internal fun providePokeRemoteDataSource(
         pokeApi: PokeApi
-    ): WoosungPokeRemoteDataSourceImp = WoosungPokeRemoteDataSourceImp(pokeApi)
-    
+    ): WoosungPokeRemoteDataSource = WoosungPokeRemoteDataSource(pokeApi)
+
 }
