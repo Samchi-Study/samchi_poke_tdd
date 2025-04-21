@@ -21,6 +21,7 @@ android {
 
 dependencies {
     implementation(project(":network"))
+    implementation(project(":common"))
     testImplementation(libs.kotlinx.serialization.json)
     implementation(libs.coil.compose)
     

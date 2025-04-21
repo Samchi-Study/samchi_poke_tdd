@@ -2,14 +2,19 @@ package com.samchi.feature.jungwon.presentation.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.samchi.feature.jungwon.data.model.PokemonPage
 import com.samchi.feature.jungwon.data.repository.PokemonRepository
+import com.samchi.poke.common.restartablestateflow.RestartableStateFlow
+import com.samchi.poke.common.restartablestateflow.restartableStateIn
 import com.samchi.poke.model.Pokemon
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -17,73 +22,56 @@ import javax.inject.Inject
 class PokemonListViewModel @Inject constructor(
     private val pokemonRepository: PokemonRepository
 ) : ViewModel() {
-    private val _uiState: MutableStateFlow<PokemonListUiState> =
-        MutableStateFlow(PokemonListUiState.Initial)
-    val uiState: StateFlow<PokemonListUiState> = _uiState.asStateFlow()
+    private val actionChannel = Channel<PokemonListAction>(Channel.UNLIMITED)
+
+    private val actionFlow: SharedFlow<PokemonListAction> = actionChannel.receiveAsFlow()
+        .shareIn(viewModelScope, SharingStarted.WhileSubscribed(5_000))
+
+    val uiState: RestartableStateFlow<PokemonListUiState> = pokemonRepository.getPokemonListFlow()
+        .onStart { PokemonListUiState.Loading }
+        .catch { PokemonListUiState.Error(it.localizedMessage ?: "Unknown Error") }
+        .map { PokemonListUiState.Success(it) }
+        .restartableStateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5_000),
+            PokemonListUiState.Initial
+        )
 
     init {
+        viewModelScope.launch {
+            actionFlow.collect { action ->
+                handleActions(action)
+            }
+        }
         dispatch(PokemonListAction.Initialize)
     }
 
     fun dispatch(action: PokemonListAction) {
-        when (action) {
-            is PokemonListAction.Initialize -> handleLoadFirstPage()
+        viewModelScope.launch {
+            actionChannel.send(action)
+        }
+    }
+
+    private suspend fun handleActions(action: PokemonListAction) {
+        return when (action) {
+            is PokemonListAction.Initialize -> handleLoadNextPage()
             is PokemonListAction.LoadMore -> handleLoadNextPage()
             is PokemonListAction.Refresh -> handleRefresh()
             is PokemonListAction.ClickFavorite -> handleToggleFavorite(action.pokemon)
-        }
-    }
-
-    private fun handleLoadFirstPage() {
-        viewModelScope.launch {
-            _uiState.update { PokemonListUiState.Loading }
-            try {
-                pokemonRepository.getPokemonPage(20, 0)
-                    .onSuccess { pokemonPage ->
-                        _uiState.update { PokemonListUiState.Success(pokemonPage) }
-                    }
-                    .onFailure { error ->
-                        _uiState.update { PokemonListUiState.Error(error.message ?: "Unknown Error") }
-                    }
-            } catch (e: Exception) {
-                _uiState.update { PokemonListUiState.Error(e.message ?: "Unknown Error") }
+            else -> { /* do nothing */
             }
         }
     }
 
-    private fun handleLoadNextPage() {
-        viewModelScope.launch {
-            val currentState = uiState.value
-            if (currentState is PokemonListUiState.Success) {
-                val nextOffset: Int = currentState.data.nextOffset ?: return@launch
-                try {
-                    pokemonRepository.getPokemonPage(offset = nextOffset)
-                        .onSuccess { result ->
-                            val updatedList = currentState.data.dataList + result.dataList
-                            _uiState.update {
-                                PokemonListUiState.Success(data = result.copy(dataList = updatedList))
-                            }
-                        }
-                        .onFailure { error ->
-                            _uiState.update { PokemonListUiState.Error(error.localizedMessage ?: "Failed to load next page") }
-                        }
-                } catch (e: Exception) {
-                    _uiState.update { PokemonListUiState.Error("Failed to load next page") }
-                }
-            }
-        }
+    private suspend fun handleLoadNextPage() {
+        pokemonRepository.loadNextPage()
     }
 
     private fun handleRefresh() {
-        viewModelScope.launch {
-            _uiState.update { PokemonListUiState.Initial }
-            handleLoadFirstPage()
-        }
+        uiState.restart()
     }
 
-    private fun handleToggleFavorite(pokemon: Pokemon) {
-        viewModelScope.launch {
-            pokemonRepository.toggleFavorite(pokemon)
-        }
+    private suspend fun handleToggleFavorite(pokemon: Pokemon) {
+        pokemonRepository.toggleFavorite(pokemon)
     }
 }
