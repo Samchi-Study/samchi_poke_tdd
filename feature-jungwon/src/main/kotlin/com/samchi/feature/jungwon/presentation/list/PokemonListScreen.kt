@@ -48,7 +48,7 @@ fun PokemonListScreen(
         PokemonListUiState.Initial -> LoadingIndicator()
         PokemonListUiState.Loading -> FooterLoading()
         is PokemonListUiState.Success -> PokemonGridScreen(
-            pokemonList = uiState.data.dataList,
+            pokemonList = uiState.data,
             onLoadNext = { doAction(PokemonListAction.LoadMore) },
             onFavoriteClick = { pokemon: Pokemon -> doAction(PokemonListAction.ClickFavorite(pokemon)) }
         )
@@ -203,12 +203,8 @@ fun PokemonListScreenPreview() {
     )
 
     val uiState = PokemonListUiState.Success(
-        data = PokemonPage(
-            nextUrl = null,
-            previousUrl = null,
-            mockPokemonList
-        )
+        data = mockPokemonList
     )
 
-    PokemonGridScreen(uiState.data.dataList, { }, { })
+    PokemonGridScreen(uiState.data, { }, { })
 }
