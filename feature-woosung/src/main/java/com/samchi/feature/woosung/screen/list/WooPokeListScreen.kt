@@ -5,8 +5,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
@@ -17,61 +17,73 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.samchi.feature.woosung.component.PokeItem
 import com.samchi.poke.model.Pokemon
 import com.samchi.poke.model.PokemonInfo
 
 @Composable
 fun WoosungRoute(
-    modifier: Modifier = Modifier, viewmodel: WooPokeListViewModel = hiltViewModel()
+    modifier: Modifier = Modifier,
+    viewmodel: WooPokeListViewModel = hiltViewModel()
 ): Unit {
-    val uiState by viewmodel.wooPokeUiState.collectAsStateWithLifecycle()
+    val pokemonPagingItems: LazyPagingItems<Pokemon> =
+        viewmodel.pagingList.collectAsLazyPagingItems()
 
 
-    WooPokeListScreen(uiState, onRetryClicked = {
-        viewmodel.fetchPokemonList()
-
-    })
+    WooPokeListScreen(pokemonPagingItems, onRetryClicked = {})
 }
 
 @Composable
 internal fun WooPokeListScreen(
-    uiState: WooPokeUiState, onRetryClicked: () -> Unit = {}
+    pokemonPaging: LazyPagingItems<Pokemon>,
+    onRetryClicked: () -> Unit = {}
 ): Unit {
 
-    when (uiState) {
-        WooPokeUiState.Init -> {
-            Box(Modifier.fillMaxSize()) {
-                CircularProgressIndicator(Modifier.align(Alignment.Center))
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
+
+        contentPadding = PaddingValues(10.dp),
+    ) {
+        items(pokemonPaging.itemCount) {
+            PokeItem(
+                pokemonImage = pokemonPaging[it]!!.getImageUrl()
+            ) {
+                Text(
+                    modifier = Modifier.align(alignment = Alignment.CenterHorizontally),
+                    text = pokemonPaging[it]!!.name
+                )
             }
         }
-
-        is WooPokeUiState.Success -> {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-
-                contentPadding = PaddingValues(10.dp),
-            ) {
-                items(items = uiState.pokeList) {
-                    PokeItem(
-                        pokemonImage = it.getImageUrl()
-                    ) {
-                        Text(
-                            modifier = Modifier.align(alignment = Alignment.CenterHorizontally),
-                            text = it.name
-                        )
+        pokemonPaging.apply {
+            when {
+                loadState.refresh is LoadState.Loading -> {
+                    item(span = { GridItemSpan(2) }) {
+                        Box {
+                            CircularProgressIndicator(Modifier.align(Alignment.Center))
+                        }
                     }
+                }
+
+                loadState.refresh is LoadState.Error -> {
+                    item(span = { GridItemSpan(2) }) {
+                        Box {
+                            NetworkFail(Modifier.align(Alignment.Center))
+                        }
+                    }
+                }
+
+                loadState.append is LoadState.Loading -> {
+
+                }
+
+                loadState.append is LoadState.Error -> {
+
                 }
             }
         }
-
-        is WooPokeUiState.Error -> {
-            NetworkFail(onRetryClicked = {
-                onRetryClicked()
-            })
-        }
-
     }
 }
 
@@ -94,7 +106,8 @@ object PokemonTest {
 @Preview
 @Composable
 private fun NetworkFail(
-    modifier: Modifier = Modifier, onRetryClicked: () -> Unit = {}
+    modifier: Modifier = Modifier,
+    onRetryClicked: () -> Unit = {}
 ): Unit {
     Box(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.align(Alignment.Center)) {
