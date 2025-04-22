@@ -1,4 +1,4 @@
-package com.samchi.feature.jungwon.presentation
+package com.samchi.feature.jungwon.presentation.list
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,37 +9,78 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.samchi.feature.jungwon.data.model.PokemonPage
 import com.samchi.poke.model.Pokemon
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
 
 @Composable
 fun PokemonListScreen(
-    viewModel: PokemonListViewModel = hiltViewModel()
+    uiState: PokemonListUiState,
+    onLoadNext: () -> Unit,
+    onRefresh: ()->Unit
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     when (uiState) {
-        is PokemonListUiState.Loading -> LoadingIndicator()
-        is PokemonListUiState.Success -> PokemonGrid(pokemonList = (uiState as PokemonListUiState.Success).data.dataList)
-        is PokemonListUiState.Error -> ErrorMessage(message = (uiState as PokemonListUiState.Error).message)
-        is PokemonListUiState.Initial -> {
-            // do nothing
+        PokemonListUiState.Initial -> LoadingIndicator()
+        PokemonListUiState.Loading -> FooterLoading()
+        is PokemonListUiState.Success -> PokemonGridScreen(
+            uiState.data.dataList,
+            onLoadNext
+        )
+
+        is PokemonListUiState.Error -> FooterError(uiState.message) { onRefresh() }
+    }
+}
+
+private const val THRESHOLD = 6
+
+@Composable
+private fun PokemonGridScreen(
+    pokemonList: List<Pokemon>,
+    onLoadNext: () -> Unit
+) {
+    val gridState = rememberLazyGridState()
+    LaunchedEffect(gridState) {
+        snapshotFlow {
+            val layoutInfo = gridState.layoutInfo
+            val totalItems = layoutInfo.totalItemsCount
+            val lastVisibleItem = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
+
+            // 마지막 아이템까지의 거리가 THRESHOLD 이하일 때 다음 페이지 로드
+            lastVisibleItem >= (totalItems - THRESHOLD)
+        }.distinctUntilChanged() // 중복 이벤트 방지
+            .filter { it } // true인 경우만 처리
+            .collect {
+                onLoadNext()
+            }
+    }
+
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
+        state = gridState,
+        modifier = Modifier.padding(8.dp)
+    ) {
+        items(pokemonList) { pokemon ->
+            PokemonCard(pokemon)
         }
     }
 }
@@ -55,25 +96,47 @@ private fun LoadingIndicator() {
 }
 
 @Composable
-private fun ErrorMessage(message: String) {
+fun FooterError(message: String, onRetry: () -> Unit) {
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
         contentAlignment = Alignment.Center
     ) {
-        Text(text = message)
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(text = message)
+            Button(
+                onClick = onRetry,
+                colors = ButtonDefaults.buttonColors()
+            ) {
+                Text("Retry")
+            }
+        }
     }
 }
 
 @Composable
-private fun PokemonGrid(pokemonList: List<Pokemon>) {
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2), // 2열 그리드
-        modifier = Modifier.padding(8.dp)
+@Preview
+fun FooterErrorPreview() {
+    FooterError("에러가 발생했습니다.", {})
+}
+
+@Composable
+fun FooterLoading() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        contentAlignment = Alignment.Center
     ) {
-        items(pokemonList) { pokemon ->
-            PokemonCard(pokemon)
-        }
+        CircularProgressIndicator()
     }
+}
+
+@Preview
+@Composable
+fun FooterLoadingPreview() {
+    FooterLoading()
 }
 
 @Composable
@@ -138,10 +201,16 @@ fun PokemonListScreenPreview() {
         Pokemon(name = "nidoran-f", url = "https://pokeapi.co/api/v2/pokemon/29/"),
         Pokemon(name = "nidorina", url = "https://pokeapi.co/api/v2/pokemon/30/")
     )
-    
+
     // Mock UI State
-    val uiState = PokemonListUiState.Success(data = PokemonPage(nextUrl = null, previousUrl = null, mockPokemonList))
+    val uiState = PokemonListUiState.Success(
+        data = PokemonPage(
+            nextUrl = null,
+            previousUrl = null,
+            mockPokemonList
+        )
+    )
 
     // Preview UI
-    PokemonGrid(pokemonList = mockPokemonList)
-} 
+    PokemonGridScreen(uiState.data.dataList) { }
+}
