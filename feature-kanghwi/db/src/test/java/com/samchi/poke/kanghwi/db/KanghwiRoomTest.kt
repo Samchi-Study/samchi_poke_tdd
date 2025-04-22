@@ -44,6 +44,8 @@ class KanghwiRoomTest {
             id = 1,
             name = "피카츄",
             url = "test",
+            previous = null,
+            next = null,
             isFavorite = false
         )
 
@@ -60,6 +62,8 @@ class KanghwiRoomTest {
         val entity = PokemonEntity(
             name = "피카츄",
             url = "test",
+            previous = null,
+            next = null,
             isFavorite = false
         )
 
@@ -77,6 +81,8 @@ class KanghwiRoomTest {
         val entity = PokemonEntity(
             name = "피카츄",
             url = "test",
+            previous = null,
+            next = null,
             isFavorite = false
         )
 
@@ -100,18 +106,24 @@ class KanghwiRoomTest {
                 id = 1,
                 name = "피카츄",
                 url = "test",
+                previous = null,
+                next = null,
                 isFavorite = false
             ),
             PokemonEntity(
                 id = 2,
                 name = "갸라도스",
                 url = "test",
+                previous = null,
+                next = null,
                 isFavorite = false
             ),
             PokemonEntity(
                 id = 3,
                 name = "이상해씨",
                 url = "test",
+                previous = null,
+                next = null,
                 isFavorite = false
             )
         )
@@ -142,18 +154,24 @@ class KanghwiRoomTest {
                 id = 1,
                 name = "피카츄",
                 url = "test",
+                previous = null,
+                next = null,
                 isFavorite = false
             ),
             PokemonEntity(
                 id = 2,
                 name = "갸라도스",
                 url = "test",
+                previous = null,
+                next = null,
                 isFavorite = false
             ),
             PokemonEntity(
                 id = 3,
                 name = "이상해씨",
                 url = "test",
+                previous = null,
+                next = null,
                 isFavorite = false
             )
         )
@@ -163,18 +181,24 @@ class KanghwiRoomTest {
                 id = 1,
                 name = "망나뇽",
                 url = "test",
+                previous = null,
+                next = null,
                 isFavorite = false
             ),
             PokemonEntity(
                 id = 2,
                 name = "뮤",
                 url = "test",
+                previous = null,
+                next = null,
                 isFavorite = false
             ),
             PokemonEntity(
                 id = 3,
                 name = "라이츄",
                 url = "test",
+                previous = null,
+                next = null,
                 isFavorite = false
             )
         )
@@ -202,6 +226,8 @@ class KanghwiRoomTest {
         val entity = PokemonEntity(
             name = "라이츄",
             url = "test",
+            previous = null,
+            next = null,
             isFavorite = false
         )
 
@@ -223,6 +249,8 @@ class KanghwiRoomTest {
             id = 2,
             name = "라이츄",
             url = "test",
+            previous = null,
+            next = null,
             isFavorite = false
         )
 
@@ -244,18 +272,24 @@ class KanghwiRoomTest {
                 id = 1,
                 name = "피카츄",
                 url = "test",
+                previous = null,
+                next = null,
                 isFavorite = false
             ),
             PokemonEntity(
                 id = 2,
                 name = "갸라도스",
                 url = "test",
+                previous = null,
+                next = null,
                 isFavorite = false
             ),
             PokemonEntity(
                 id = 3,
                 name = "이상해씨",
                 url = "test",
+                previous = null,
+                next = null,
                 isFavorite = false
             )
         )
@@ -277,18 +311,24 @@ class KanghwiRoomTest {
                 id = 1,
                 name = "피카츄",
                 url = "test",
+                previous = null,
+                next = null,
                 isFavorite = false
             ),
             PokemonEntity(
                 id = 2,
                 name = "갸라도스",
                 url = "test",
+                previous = null,
+                next = null,
                 isFavorite = false
             ),
             PokemonEntity(
                 id = 3,
                 name = "이상해씨",
                 url = "test",
+                previous = null,
+                next = null,
                 isFavorite = false
             )
         )
@@ -309,6 +349,8 @@ class KanghwiRoomTest {
         val entity = PokemonEntity(
             name = "이상해씨",
             url = "test",
+            previous = null,
+            next = null,
             isFavorite = false
         )
 
@@ -323,18 +365,24 @@ class KanghwiRoomTest {
                 id = 1,
                 name = "피카츄",
                 url = "test",
+                previous = null,
+                next = null,
                 isFavorite = false
             ),
             PokemonEntity(
                 id = 2,
                 name = "갸라도스",
                 url = "test",
+                previous = null,
+                next = null,
                 isFavorite = false
             ),
             PokemonEntity(
                 id = 3,
                 name = "이상해씨",
                 url = "test",
+                previous = null,
+                next = null,
                 isFavorite = false
             )
         )

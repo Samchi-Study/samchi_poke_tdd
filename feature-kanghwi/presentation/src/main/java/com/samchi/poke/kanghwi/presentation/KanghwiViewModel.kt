@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.cachedIn
 import com.samchi.poke.kanghwi.LocalDataSource
+import com.samchi.poke.kanghwi.RemoteDataSource
 import com.samchi.poke.kanghwi.model.Pokemon
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -15,12 +16,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class KanghwiViewModel @Inject constructor(
-    pager: Pager<Int, Pokemon>,
+    private val remoteDataSource: RemoteDataSource,
     private val localDataSource: LocalDataSource
 ) : ViewModel() {
 
-    val pagingFlow = pager
-        .flow
+    val pagingFlow = remoteDataSource.getPokemonPagingFlow()
         .cachedIn(viewModelScope)
 
     private val _retryFlow = MutableSharedFlow<Unit>()
@@ -30,12 +30,13 @@ internal class KanghwiViewModel @Inject constructor(
     fun toggleFavorite(pokemon: Pokemon) {
         viewModelScope.launch {
             if (pokemon.isFavorite) {
-                localDataSource.deletePokemon(pokemon)
+                localDataSource.upsertPokemon(pokemon.copy(isFavorite = false))
+
             } else {
                 localDataSource.upsertPokemon(pokemon.copy(isFavorite = true))
             }
 
-            _retryFlow.emit(Unit)
+//            _retryFlow.emit(Unit)
         }
     }
 

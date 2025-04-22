@@ -5,7 +5,10 @@ import com.samchi.poke.kanghwi.model.Pokemon
 
 
 internal fun PokemonEntity.toModel() = Pokemon(
+    id = id,
     name = name,
     url = url,
+    previous = previous,
+    next = next,
     isFavorite = isFavorite
 )

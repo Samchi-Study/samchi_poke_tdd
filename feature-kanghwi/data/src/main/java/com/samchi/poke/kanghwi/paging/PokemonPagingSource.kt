@@ -1,8 +1,8 @@
-package com.samchi.poke.kanghwi.pagingsource
+package com.samchi.poke.kanghwi.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.samchi.poke.kanghwi.LocalDataSource
+import com.samchi.poke.kanghwi.db.KanghwiDao
 import com.samchi.poke.kanghwi.model.Pokemon
 import com.samchi.poke.kanghwi.toModel
 import com.samchi.poke.network.PokeApi
@@ -10,7 +10,7 @@ import com.samchi.poke.network.PokeApi
 
 class PokemonPagingSource(
     private val api: PokeApi,
-    private val localDataSource: LocalDataSource
+    private val dao: KanghwiDao
 ) : PagingSource<Int, Pokemon>() {
 
     private var previousPage: Int = 0
@@ -21,7 +21,7 @@ class PokemonPagingSource(
             val response = api.getPokemonList(limit = params.loadSize, offset = page)
 
             val models = response.toModel().results
-            val entities = localDataSource.getPokemonList()
+            val entities = dao.getPokemonList().map { it.toModel() }
 
             val result = models.fold(mutableListOf<Pokemon>()) { acc, model ->
 

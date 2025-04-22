@@ -33,6 +33,7 @@ coreKtxVersion = "1.6.1"
 junitKtx = "1.2.1"
 coil = "3.0.4"
 paging3 = "3.3.2"
+pagingCommonAndroid = "3.3.6"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -118,6 +119,7 @@ paging3 = { module = "androidx.paging:paging-runtime", version.ref = "paging3" }
 paging3-common = { module = "androidx.paging:paging-common", version.ref = "paging3" }
 paging-test-android = {module = "androidx.paging:paging-testing-android", version.ref = "paging3" }
 paging3-compose = { module = "androidx.paging:paging-compose",version.ref = "paging3" }
+paging3-room = { module = "androidx.room:room-paging", version.ref = "room"}
 
 # Dependencies of the included build-logic
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
@@ -126,6 +128,7 @@ compose-gradlePlugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
 room-gradlePlugin = { group = "androidx.room", name = "room-gradle-plugin", version.ref = "room" }
+androidx-paging-common-android = { group = "androidx.paging", name = "paging-common-android", version.ref = "pagingCommonAndroid" }
 
 
 [plugins]

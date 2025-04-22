@@ -1,7 +1,7 @@
 package com.samchi.poke.kanghwi.db
 
+import androidx.paging.PagingSource
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -34,4 +34,6 @@ interface KanghwiDao {
     @Query("DELETE FROM kanghwipokemon WHERE name =:name")
     suspend fun deletePokemon(name: String)
 
+    @Query("SELECT * FROM KanghwiPokemon")
+    fun getPagingSource(): PagingSource<Int, PokemonEntity>
 }

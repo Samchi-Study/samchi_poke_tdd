@@ -107,7 +107,7 @@ private fun PokemonItem(
 
         ) {
             AsyncImage(
-                modifier= Modifier.size(128.dp),
+                modifier = Modifier.size(128.dp),
                 model = pokemon.getImageUrl(),
                 placeholder = painterResource(R.drawable.icon_pokeball_black),
                 contentDescription = null
@@ -179,7 +179,10 @@ private fun PokemonCircleProgressBar() {
 private fun PreviewPokeItem() {
     PokemonItem(
         pokemon = Pokemon(
+            id = 0,
             "피카츄",
+            previous = null,
+            next = null,
             url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png",
             isFavorite = false
         ),
