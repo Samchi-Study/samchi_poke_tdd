@@ -27,15 +27,16 @@ class PokemonListViewModel @Inject constructor(
     private val actionFlow: SharedFlow<PokemonListAction> = actionChannel.receiveAsFlow()
         .shareIn(viewModelScope, SharingStarted.WhileSubscribed(5_000))
 
-    val uiState: RestartableStateFlow<PokemonListUiState> = pokemonRepository.getPokemonListFlow()
-        .onStart { PokemonListUiState.Loading }
-        .catch { PokemonListUiState.Error(it.localizedMessage ?: "Unknown Error") }
-        .map { PokemonListUiState.Success(it) }
-        .restartableStateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(5_000),
-            PokemonListUiState.Initial
-        )
+    val uiState: RestartableStateFlow<PokemonListUiState> =
+        pokemonRepository.getPokemonListFlow()
+            .map<List<Pokemon>, PokemonListUiState> { PokemonListUiState.Success(it) }
+            .onStart { emit(PokemonListUiState.Loading) }
+            .catch { emit(PokemonListUiState.Error(it.localizedMessage ?: "Unknown Error")) }
+            .restartableStateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(5_000),
+                PokemonListUiState.Initial
+            )
 
     init {
         viewModelScope.launch {
