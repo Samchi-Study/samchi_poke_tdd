@@ -22,8 +22,7 @@ class RemoteDataSource @Inject constructor(
 
     fun getPokemonPagingFlow() = Pager(
         config = PagingConfig(
-            pageSize = 30,
-            prefetchDistance = 90,
+            pageSize = 100,
             enablePlaceholders = false
         ),
         remoteMediator = PokemonPagingMediator(api, db),

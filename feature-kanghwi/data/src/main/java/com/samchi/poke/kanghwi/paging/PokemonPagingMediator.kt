@@ -17,6 +17,7 @@ class PokemonPagingMediator(
     private val db: RoomDatabase
 ) : RemoteMediator<Int, PokemonEntity>() {
 
+
     private val dao = (db as KanghwiDatabase).kanghwiDao()
 
     override suspend fun load(
@@ -51,11 +52,12 @@ class PokemonPagingMediator(
                             } ?: return MediatorResult.Success(true)
                     }
                 }
+
                 LoadType.PREPEND -> return MediatorResult.Success(false)
                 LoadType.APPEND -> {
                     val localEntities = dao.getPokemonList()
 
-                   localEntities.lastOrNull()?.getNextOffset()?.let { nextKey ->
+                    localEntities.lastOrNull()?.getNextOffset()?.let { nextKey ->
                         val response = pokeApi.getPokemonList(
                             limit = state.config.pageSize,
                             offset = nextKey
