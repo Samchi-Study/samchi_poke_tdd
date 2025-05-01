@@ -23,20 +23,15 @@ internal class KanghwiViewModel @Inject constructor(
     val pagingFlow = remoteDataSource.getPokemonPagingFlow()
         .cachedIn(viewModelScope)
 
-    private val _retryFlow = MutableSharedFlow<Unit>()
-    val retryFlow = _retryFlow.asSharedFlow()
-
 
     fun toggleFavorite(pokemon: Pokemon) {
         viewModelScope.launch {
             if (pokemon.isFavorite) {
-                localDataSource.upsertPokemon(pokemon.copy(isFavorite = false))
+                localDataSource.updatePokemon(pokemon.copy(isFavorite = false))
 
             } else {
-                localDataSource.upsertPokemon(pokemon.copy(isFavorite = true))
+                localDataSource.updatePokemon(pokemon.copy(isFavorite = true))
             }
-
-//            _retryFlow.emit(Unit)
         }
     }
 

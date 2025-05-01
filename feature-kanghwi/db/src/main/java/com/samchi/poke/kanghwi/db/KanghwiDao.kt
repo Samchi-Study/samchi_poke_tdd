@@ -31,8 +31,11 @@ interface KanghwiDao {
     @Upsert
     suspend fun upsertPokemon(entity: PokemonEntity)
 
-    @Query("DELETE FROM kanghwipokemon WHERE name =:name")
+    @Query("DELETE FROM Kanghwipokemon WHERE name =:name")
     suspend fun deletePokemon(name: String)
+
+    @Query("DELETE FROM KanghwiPokemon")
+    suspend fun deleteAllPokemon()
 
     @Query("SELECT * FROM KanghwiPokemon")
     fun getPagingSource(): PagingSource<Int, PokemonEntity>

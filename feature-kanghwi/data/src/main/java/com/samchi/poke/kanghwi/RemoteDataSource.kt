@@ -4,7 +4,8 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.map
-import com.samchi.poke.kanghwi.db.KanghwiDao
+import androidx.room.RoomDatabase
+import com.samchi.poke.kanghwi.db.KanghwiDatabase
 import com.samchi.poke.kanghwi.paging.PokemonPagingMediator
 import com.samchi.poke.network.PokeApi
 import kotlinx.coroutines.flow.map
@@ -16,7 +17,7 @@ import javax.inject.Singleton
 @Singleton
 class RemoteDataSource @Inject constructor(
     private val api: PokeApi,
-    private val dao: KanghwiDao
+    private val db: RoomDatabase
 ) {
 
     fun getPokemonPagingFlow() = Pager(
@@ -25,8 +26,8 @@ class RemoteDataSource @Inject constructor(
             prefetchDistance = 90,
             enablePlaceholders = false
         ),
-        remoteMediator = PokemonPagingMediator(api, dao),
-        pagingSourceFactory = { dao.getPagingSource() }
+        remoteMediator = PokemonPagingMediator(api, db),
+        pagingSourceFactory = { (db as KanghwiDatabase).kanghwiDao().getPagingSource() }
     )
         .flow
         .map { pagingData ->

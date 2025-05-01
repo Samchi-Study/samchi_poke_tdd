@@ -17,6 +17,10 @@ class LocalDataSource @Inject constructor(
         dao.upsertPokemon(model.toEntity())
     }
 
+    suspend fun updatePokemon(model: Pokemon) {
+        dao.updatePokemon(model.toEntity())
+    }
+
     suspend fun deletePokemon(model: Pokemon) {
         dao.deletePokemon(model.name)
     }

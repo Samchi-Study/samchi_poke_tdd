@@ -16,6 +16,7 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
             with(pluginManager) {
                 apply("com.android.library")
                 apply("org.jetbrains.kotlin.android")
+                apply("com.google.devtools.ksp")
             }
 
             extensions.configure<LibraryExtension> {
@@ -34,6 +35,7 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                 testImplementation(libs.findLibrary("test-coroutine").get())
                 androidTestImplementation(libs.findLibrary("androidx-junit").get())
                 androidTestImplementation(libs.findLibrary("androidx-espresso-core").get())
+                add("ksp", libs.findLibrary("hilt-compiler").get())
             }
         }
     }

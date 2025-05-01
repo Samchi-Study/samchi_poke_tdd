@@ -21,6 +21,9 @@ dependencies {
     implementation(libs.paging3)
     implementation(libs.paging3.room)
 
+    implementation(libs.room.ktx)
+    ksp(libs.room.compiler)
+
     implementation(libs.paging.test.android)
     testImplementation(libs.paging3.common)
     testImplementation(kotlin("test"))
