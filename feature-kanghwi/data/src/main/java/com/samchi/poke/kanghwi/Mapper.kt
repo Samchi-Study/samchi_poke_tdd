@@ -1,5 +1,6 @@
 package com.samchi.poke.kanghwi
 
+import com.samchi.poke.kanghwi.db.entity.FavoritePokemonEntity
 import com.samchi.poke.kanghwi.db.entity.PokemonEntity
 import com.samchi.poke.kanghwi.model.Pokemon
 import com.samchi.poke.kanghwi.model.PokemonInfo
@@ -46,5 +47,10 @@ internal fun Pokemon.toEntity() = PokemonEntity(
     url = getImageUrl(),
     previous = previous,
     next = next,
+    isFavorite = isFavorite
+)
+
+internal fun Pokemon.toFavoriteEntity() = FavoritePokemonEntity(
+    id = id,
     isFavorite = isFavorite
 )

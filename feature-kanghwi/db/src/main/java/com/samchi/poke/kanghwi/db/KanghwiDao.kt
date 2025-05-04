@@ -2,11 +2,13 @@ package com.samchi.poke.kanghwi.db
 
 import androidx.paging.PagingSource
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import androidx.room.Upsert
+import com.samchi.poke.kanghwi.db.entity.FavoritePokemonEntity
 import com.samchi.poke.kanghwi.db.entity.PokemonEntity
 
 
@@ -39,4 +41,15 @@ interface KanghwiDao {
 
     @Query("SELECT * FROM KanghwiPokemon")
     fun getPagingSource(): PagingSource<Int, PokemonEntity>
+
+
+    // 좋아요를 클릭한 포켓몬 정보는 별도로 관리
+    @Query("SELECT * FROM FAVORITEPOKEMON")
+    suspend fun getFavoritePokemonList(): List<FavoritePokemonEntity>
+
+    @Insert
+    suspend fun insertFavoritePokemon(pokemon:FavoritePokemonEntity)
+
+    @Delete
+    suspend fun deleteFavoritePokemon(pokemon: FavoritePokemonEntity)
 }

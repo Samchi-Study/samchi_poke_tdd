@@ -1,6 +1,7 @@
 package com.samchi.poke.kanghwi
 
 import com.samchi.poke.kanghwi.db.KanghwiDao
+import com.samchi.poke.kanghwi.db.entity.FavoritePokemonEntity
 import com.samchi.poke.kanghwi.model.Pokemon
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -11,7 +12,8 @@ class LocalDataSource @Inject constructor(
     private val dao: KanghwiDao
 ) {
 
-    suspend fun getPokemonList() = dao.getPokemonList().map { it.toModel() }
+    suspend fun getPokemonList() =
+        dao.getPokemonList().map { it.toModel() }
 
     suspend fun upsertPokemon(model: Pokemon) {
         dao.upsertPokemon(model.toEntity())
@@ -25,4 +27,14 @@ class LocalDataSource @Inject constructor(
         dao.deletePokemon(model.name)
     }
 
+    suspend fun getFavoritePokemonList(): List<FavoritePokemonEntity> =
+        dao.getFavoritePokemonList()
+
+    suspend fun insertFavoritePokemon(model: Pokemon) {
+        dao.insertFavoritePokemon(model.toFavoriteEntity())
+    }
+
+    suspend fun deleteFavoritePokemon(model: Pokemon) {
+        dao.deleteFavoritePokemon(model.toFavoriteEntity())
+    }
 }

@@ -4,6 +4,7 @@ import android.content.Context
 import android.database.sqlite.SQLiteConstraintException
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
+import com.samchi.poke.kanghwi.db.entity.FavoritePokemonEntity
 import com.samchi.poke.kanghwi.db.entity.PokemonEntity
 import kotlinx.coroutines.test.runTest
 import org.junit.After
@@ -400,5 +401,37 @@ class KanghwiRoomTest {
         assertEquals(2, list[1].id)
         assertEquals("이상해씨", list[2].name)
         assertEquals(3, list[2].id)
+    }
+
+    @Test
+    fun `좋아요한 pokemon을 db에 저장한다`() = runTest {
+        val pokemon = FavoritePokemonEntity(
+            id = 1,
+            isFavorite = true
+        )
+
+        dao.insertFavoritePokemon(pokemon)
+
+        val result = dao.getFavoritePokemonList().first()
+
+        assertEquals(true, result.isFavorite)
+    }
+
+    @Test
+    fun `좋아요한 pokemon을 db에서 제거한다`() = runTest {
+        val pokemon = FavoritePokemonEntity(
+            id = 1,
+            isFavorite = true
+        )
+
+        dao.insertFavoritePokemon(pokemon)
+
+        val result = dao.getFavoritePokemonList().first()
+
+        dao.deleteFavoritePokemon(result)
+
+        val result2 = dao.getFavoritePokemonList()
+
+        assertEquals(0, result2.size)
     }
 }

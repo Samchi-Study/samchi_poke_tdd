@@ -4,8 +4,7 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
-import androidx.room.RoomDatabase
-import com.samchi.poke.kanghwi.db.KanghwiDatabase
+import com.samchi.poke.kanghwi.db.KanghwiDao
 import com.samchi.poke.kanghwi.db.entity.PokemonEntity
 import com.samchi.poke.kanghwi.toEntity
 import com.samchi.poke.network.PokeApi
@@ -14,11 +13,10 @@ import com.samchi.poke.network.PokeApi
 @OptIn(ExperimentalPagingApi::class)
 class PokemonPagingMediator(
     private val pokeApi: PokeApi,
-    private val db: RoomDatabase
+    private val dao: KanghwiDao
 ) : RemoteMediator<Int, PokemonEntity>() {
 
 
-    private val dao = (db as KanghwiDatabase).kanghwiDao()
 
     override suspend fun load(
         loadType: LoadType,

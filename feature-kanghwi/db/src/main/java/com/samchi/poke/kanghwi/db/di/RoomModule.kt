@@ -22,6 +22,7 @@ internal object RoomModule {
         context: Context
     ): RoomDatabase = Room
         .databaseBuilder(context, KanghwiDatabase::class.java, "Kanghwi-DB")
+        .fallbackToDestructiveMigration()
         .build()
 
     @Provides
