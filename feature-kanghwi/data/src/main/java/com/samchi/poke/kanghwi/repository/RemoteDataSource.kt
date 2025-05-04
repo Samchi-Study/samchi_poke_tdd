@@ -29,7 +29,4 @@ internal class RemoteDataSource @Inject constructor(
         pagingSourceFactory = { dao.getPagingSource() }
     )
         .flow
-        .map { pagingData ->
-            pagingData.map { it.toModel() }
-        }
 }
