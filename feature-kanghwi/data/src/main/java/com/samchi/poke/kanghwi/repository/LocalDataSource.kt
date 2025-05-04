@@ -1,14 +1,17 @@
-package com.samchi.poke.kanghwi
+package com.samchi.poke.kanghwi.repository
 
 import com.samchi.poke.kanghwi.db.KanghwiDao
 import com.samchi.poke.kanghwi.db.entity.FavoritePokemonEntity
 import com.samchi.poke.kanghwi.model.Pokemon
+import com.samchi.poke.kanghwi.toEntity
+import com.samchi.poke.kanghwi.toFavoriteEntity
+import com.samchi.poke.kanghwi.toModel
 import javax.inject.Inject
 import javax.inject.Singleton
 
 
 @Singleton
-class LocalDataSource @Inject constructor(
+internal class LocalDataSource @Inject constructor(
     private val dao: KanghwiDao
 ) {
 
