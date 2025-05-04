@@ -10,6 +10,7 @@ import androidx.room.Update
 import androidx.room.Upsert
 import com.samchi.poke.kanghwi.db.entity.FavoritePokemonEntity
 import com.samchi.poke.kanghwi.db.entity.PokemonEntity
+import kotlinx.coroutines.flow.Flow
 
 
 @Dao
@@ -45,10 +46,10 @@ interface KanghwiDao {
 
     // 좋아요를 클릭한 포켓몬 정보는 별도로 관리
     @Query("SELECT * FROM FAVORITEPOKEMON")
-    suspend fun getFavoritePokemonList(): List<FavoritePokemonEntity>
+    fun getFavoritePokemonList(): Flow<List<FavoritePokemonEntity>>
 
     @Insert
-    suspend fun insertFavoritePokemon(pokemon:FavoritePokemonEntity)
+    suspend fun insertFavoritePokemon(pokemon: FavoritePokemonEntity)
 
     @Delete
     suspend fun deleteFavoritePokemon(pokemon: FavoritePokemonEntity)

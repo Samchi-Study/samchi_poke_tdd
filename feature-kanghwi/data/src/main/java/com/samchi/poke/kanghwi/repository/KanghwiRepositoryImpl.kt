@@ -9,9 +9,10 @@ import com.samchi.poke.kanghwi.toFavoriteEntity
 import com.samchi.poke.kanghwi.toModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
 
-internal class KanghwiRepositoryImpl(
+internal class KanghwiRepositoryImpl @Inject constructor(
     private val remoteDataSource: RemoteDataSource,
     private val localDataSource: LocalDataSource
 ) : KanghwiRepository {
@@ -36,7 +37,7 @@ internal class KanghwiRepositoryImpl(
     override suspend fun deletePokemon(model: Pokemon) =
         localDataSource.deletePokemon(model.toEntity())
 
-    override suspend fun getFavoritePokemonList(): List<FavoritePokemonEntity> =
+    override fun getFavoritePokemonList(): Flow<List<FavoritePokemonEntity>> =
         localDataSource.getFavoritePokemonList()
 
     override suspend fun insertFavoritePokemon(model: Pokemon) =

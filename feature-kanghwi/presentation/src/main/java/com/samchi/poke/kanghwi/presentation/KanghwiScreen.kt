@@ -42,6 +42,7 @@ fun KanghwiRoute(
 
     val pagingData = viewModel.pagingFlow.collectAsLazyPagingItems()
 
+
     KanghwiScreen(
         pagingData = pagingData,
         onFavoriteEvent = { viewModel.toggleFavorite(it) },

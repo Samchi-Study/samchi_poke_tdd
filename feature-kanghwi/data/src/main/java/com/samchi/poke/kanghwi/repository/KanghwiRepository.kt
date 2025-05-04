@@ -8,9 +8,9 @@ import kotlinx.coroutines.flow.Flow
 
 interface KanghwiRepository {
 
-    fun getPokemonPagingFlow() : Flow<PagingData<Pokemon>>
+    fun getPokemonPagingFlow(): Flow<PagingData<Pokemon>>
 
-    suspend fun getPokemonList() : List<Pokemon>
+    suspend fun getPokemonList(): List<Pokemon>
 
     suspend fun upsertPokemon(model: Pokemon)
 
@@ -18,7 +18,7 @@ interface KanghwiRepository {
 
     suspend fun deletePokemon(model: Pokemon)
 
-    suspend fun getFavoritePokemonList(): List<FavoritePokemonEntity>
+    fun getFavoritePokemonList(): Flow<List<FavoritePokemonEntity>>
 
     suspend fun insertFavoritePokemon(model: Pokemon)
 

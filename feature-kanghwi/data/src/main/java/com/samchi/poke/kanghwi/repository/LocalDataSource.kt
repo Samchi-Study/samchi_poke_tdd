@@ -3,6 +3,7 @@ package com.samchi.poke.kanghwi.repository
 import com.samchi.poke.kanghwi.db.KanghwiDao
 import com.samchi.poke.kanghwi.db.entity.FavoritePokemonEntity
 import com.samchi.poke.kanghwi.db.entity.PokemonEntity
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -27,7 +28,7 @@ internal class LocalDataSource @Inject constructor(
         dao.deletePokemon(model.name)
     }
 
-    suspend fun getFavoritePokemonList(): List<FavoritePokemonEntity> =
+    fun getFavoritePokemonList(): Flow<List<FavoritePokemonEntity>> =
         dao.getFavoritePokemonList()
 
     suspend fun insertFavoritePokemon(model: FavoritePokemonEntity) {
