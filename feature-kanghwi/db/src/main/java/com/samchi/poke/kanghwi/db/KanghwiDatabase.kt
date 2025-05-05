@@ -11,7 +11,8 @@ import com.samchi.poke.kanghwi.db.entity.PokemonEntity
         PokemonEntity::class,
         FavoritePokemonEntity::class
     ],
-    version = 2
+    version = 2,
+    exportSchema = false
 )
 abstract class KanghwiDatabase : RoomDatabase() {
 

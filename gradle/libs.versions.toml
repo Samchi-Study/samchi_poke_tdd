@@ -147,6 +147,7 @@ compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "
 samchi_poke_feature = { id = "com.samchi.poke.feature", version = "unspecified"}
 samchi_poke_library = { id= "com.samchi.poke.library", version = "unspcified"}
 samchi_poke_hilt = { id = "com.samchi.poke.hilt.android", version = "unspecified"}
+samchi_poke_room = { id = "com.samchi.poke.room", version = "unspecified"}
 
 [bundles]
 compose = [
