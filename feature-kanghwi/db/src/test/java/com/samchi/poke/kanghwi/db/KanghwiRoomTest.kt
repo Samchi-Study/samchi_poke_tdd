@@ -6,6 +6,11 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import com.samchi.poke.kanghwi.db.entity.FavoritePokemonEntity
 import com.samchi.poke.kanghwi.db.entity.PokemonEntity
+import kotlinx.coroutines.channels.actor
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Test
@@ -404,7 +409,7 @@ class KanghwiRoomTest {
     }
 
     @Test
-    fun `좋아요한 pokemon을 db에 저장한다`() = runTest {
+    fun `좋아요한 pokemon을 db에 저장한다`() = runTest(UnconfinedTestDispatcher()) {
         val pokemon = FavoritePokemonEntity(
             id = 1,
             isFavorite = true
@@ -414,11 +419,11 @@ class KanghwiRoomTest {
 
         val result = dao.getFavoritePokemonList().first()
 
-        assertEquals(true, result.isFavorite)
+        assertEquals(true, result.first().isFavorite)
     }
 
     @Test
-    fun `좋아요한 pokemon을 db에서 제거한다`() = runTest {
+    fun `좋아요한 pokemon을 db에서 제거한다`() = runTest(UnconfinedTestDispatcher()) {
         val pokemon = FavoritePokemonEntity(
             id = 1,
             isFavorite = true
@@ -428,9 +433,9 @@ class KanghwiRoomTest {
 
         val result = dao.getFavoritePokemonList().first()
 
-        dao.deleteFavoritePokemon(result)
+        dao.deleteFavoritePokemon(result.first())
 
-        val result2 = dao.getFavoritePokemonList()
+        val result2 = dao.getFavoritePokemonList().first()
 
         assertEquals(0, result2.size)
     }
