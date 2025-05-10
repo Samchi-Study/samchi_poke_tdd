@@ -16,8 +16,6 @@ class PokemonPagingMediator(
     private val dao: KanghwiDao
 ) : RemoteMediator<Int, PokemonEntity>() {
 
-
-
     override suspend fun load(
         loadType: LoadType,
         state: PagingState<Int, PokemonEntity>

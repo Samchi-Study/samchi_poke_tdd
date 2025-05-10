@@ -20,11 +20,6 @@ internal class KanghwiViewModel @Inject constructor(
 ) : ViewModel() {
 
     val pagingFlow = getPagingDataUseCase(viewModelScope)
-        .catch { _errorFlow.emit(it) }
-
-    private val _errorFlow = MutableSharedFlow<Throwable>()
-    val errorFlow = _errorFlow.asSharedFlow()
-
 
     fun toggleFavorite(pokemon: Pokemon) {
         viewModelScope.launch {
