@@ -6,6 +6,9 @@ import com.samchi.poke.kanghwi.model.Pokemon
 import com.samchi.poke.kanghwi.repository.KanghwiRepository
 import com.samchi.poke.kanghwi.usecase.KanghwiPagingDataUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -17,6 +20,10 @@ internal class KanghwiViewModel @Inject constructor(
 ) : ViewModel() {
 
     val pagingFlow = getPagingDataUseCase(viewModelScope)
+        .catch { _errorFlow.emit(it) }
+
+    private val _errorFlow = MutableSharedFlow<Throwable>()
+    val errorFlow = _errorFlow.asSharedFlow()
 
 
     fun toggleFavorite(pokemon: Pokemon) {
