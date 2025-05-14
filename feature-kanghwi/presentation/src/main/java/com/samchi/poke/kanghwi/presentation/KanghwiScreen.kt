@@ -16,20 +16,16 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -39,21 +35,32 @@ import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil3.compose.AsyncImage
-import com.samchi.poke.common.ui.CustomSnackbarHostState
 import com.samchi.poke.kanghwi.model.Pokemon
+import kotlinx.coroutines.flow.collectLatest
 
 
 @Composable
 fun KanghwiRoute(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onShowSnackBar: suspend (String, String?) -> Boolean
 ) {
     val viewModel: KanghwiViewModel = hiltViewModel()
 
     val pagingData = viewModel.pagingFlow.collectAsLazyPagingItems()
 
+    val message = stringResource(R.string.error_message)
+    val undo = stringResource(R.string.retry)
+
+    if (pagingData.loadState.refresh is LoadState.Error) {
+        LaunchedEffect(Unit) {
+            onShowSnackBar(message, undo)
+        }
+    }
+
     KanghwiScreen(
         pagingData = pagingData,
         onFavoriteEvent = { viewModel.toggleFavorite(it) },
+        onShowSnackBar = onShowSnackBar
     )
 }
 
@@ -62,40 +69,38 @@ private fun KanghwiScreen(
     modifier: Modifier = Modifier,
     pagingData: LazyPagingItems<Pokemon>,
     onFavoriteEvent: (Pokemon) -> Unit,
+    onShowSnackBar: suspend (String, String?) -> Boolean
 ) {
-    if (pagingData.loadState.refresh is LoadState.Error) {
-        PokeSnackbar { pagingData.retry() }
-    } else {
-        PokeList(
-            modifier = modifier,
-            list = pagingData,
-            onFavoriteEvent = onFavoriteEvent
-        )
-    }
+    PokeList(
+        modifier = modifier,
+        pagingData = pagingData,
+        onFavoriteEvent = onFavoriteEvent,
+        onShowSnackBar = onShowSnackBar
+    )
 }
 
 @Composable
 private fun PokeList(
     modifier: Modifier = Modifier,
-    list: LazyPagingItems<Pokemon>,
-    onFavoriteEvent: (Pokemon) -> Unit
+    pagingData: LazyPagingItems<Pokemon>,
+    onFavoriteEvent: (Pokemon) -> Unit,
+    onShowSnackBar: suspend (String, String?) -> Boolean
 ) {
     val lazyListState = rememberLazyListState()
+    val message = stringResource(R.string.error_message)
+    val undo = stringResource(R.string.retry)
 
-    val endOfScroll: Boolean by remember {
-        derivedStateOf {
-            val lastIndex = lazyListState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
-            lastIndex != null && list.itemCount > 0 && lastIndex >= list.itemCount - 1
+    LaunchedEffect(lazyListState) {
+        snapshotFlow {
+            lazyListState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
         }
-    }
-
-    if (endOfScroll) {
-        if (
-            list.loadState.append is LoadState.Error ||
-            list.loadState.refresh is LoadState.Error
-        ) {
-            PokeSnackbar { list.retry() }
-        }
+            .collectLatest { index ->
+                index?.let { idx ->
+                    if (pagingData.itemCount > 0 && idx >= pagingData.itemCount - 1) {
+                        onShowSnackBar(message, undo)
+                    }
+                }
+            }
     }
 
     LazyColumn(
@@ -103,12 +108,12 @@ private fun PokeList(
         modifier = modifier
     ) {
         items(
-            count = list.itemCount,
-            key = { idx -> list[idx]!!.name }) { idx ->
+            count = pagingData.itemCount,
+            key = { idx -> pagingData[idx]!!.name }) { idx ->
             Column {
                 PokemonItem(
                     modifier = modifier,
-                    pokemon = list[idx]!!,
+                    pokemon = pagingData[idx]!!,
                     onFavoriteEvent = onFavoriteEvent
                 )
                 HorizontalDivider()
@@ -116,8 +121,8 @@ private fun PokeList(
         }
 
         when {
-            list.loadState.refresh is LoadState.Loading ||
-                    list.loadState.append is LoadState.Loading -> {
+            pagingData.loadState.refresh is LoadState.Loading ||
+                    pagingData.loadState.append is LoadState.Loading -> {
                 item { PokeLoadingBar() }
             }
         }
@@ -167,30 +172,6 @@ private fun PokemonItem(
             contentDescription = "",
             colorFilter = ColorFilter.tint(color = Color.White),
         )
-    }
-}
-
-
-@Composable
-private fun PokeSnackbar(
-    onRetryEvent: () -> Unit
-) {
-    val context = LocalContext.current
-    val snackbarHostState = CustomSnackbarHostState.current
-
-    LaunchedEffect(Unit) {
-        val result = snackbarHostState.showSnackbar(
-            message = context.getString(R.string.error_message),
-            actionLabel = context.getString(R.string.retry)
-        )
-
-        when (result) {
-            SnackbarResult.ActionPerformed -> {
-                onRetryEvent()
-            }
-
-            else -> {}
-        }
     }
 }
 
