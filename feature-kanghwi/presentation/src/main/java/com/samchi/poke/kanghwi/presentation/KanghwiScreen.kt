@@ -9,13 +9,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -86,7 +89,7 @@ fun KanghwiMain(
                 composable(
                     route = "Kanghwi"
                 ) {
-                    PokeList(
+                    PokeGrid(
                         modifier = modifier,
                         pagingData = pagingData,
                         onFavoriteEvent = { viewModel.toggleFavorite(it) },
@@ -104,17 +107,17 @@ fun KanghwiMain(
 }
 
 @Composable
-private fun PokeList(
+private fun PokeGrid(
     modifier: Modifier = Modifier,
     pagingData: LazyPagingItems<Pokemon>,
     onFavoriteEvent: (Pokemon) -> Unit,
     onShowSnackBar: () -> Unit
 ) {
-    val lazyListState = rememberLazyListState()
+    val lazyGridState = rememberLazyGridState()
 
-    LaunchedEffect(lazyListState) {
+    LaunchedEffect(lazyGridState) {
         snapshotFlow {
-            lazyListState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
+            lazyGridState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
         }
             .collectLatest { index ->
                 index?.let { idx ->
@@ -125,27 +128,27 @@ private fun PokeList(
             }
     }
 
-    LazyColumn(
-        state = lazyListState,
-        modifier = modifier
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
+        modifier = modifier,
+        state = lazyGridState
     ) {
         items(
             count = pagingData.itemCount,
             key = { idx -> pagingData[idx]!!.name }) { idx ->
-            Column {
-                PokemonItem(
-                    modifier = modifier,
-                    pokemon = pagingData[idx]!!,
-                    onFavoriteEvent = onFavoriteEvent
-                )
-                HorizontalDivider()
-            }
+            PokemonItem(
+                modifier = modifier,
+                pokemon = pagingData[idx]!!,
+                onFavoriteEvent = onFavoriteEvent
+            )
         }
 
         when {
             pagingData.loadState.refresh is LoadState.Loading ||
                     pagingData.loadState.append is LoadState.Loading -> {
-                item { PokeLoadingBar() }
+                item(
+                    span = { GridItemSpan(1) }
+                ) { PokeLoadingBar() }
             }
         }
     }
@@ -157,43 +160,53 @@ private fun PokemonItem(
     pokemon: Pokemon,
     onFavoriteEvent: (Pokemon) -> Unit
 ) {
-
-    Row(
+    Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
+            .padding(8.dp),
+        shape = RoundedCornerShape(8.dp)
     ) {
-        Row {
-            AsyncImage(
-                modifier = Modifier.size(128.dp),
-                model = pokemon.getImageUrl(),
-                placeholder = painterResource(R.drawable.icon_pokeball_black),
-                contentDescription = null
-            )
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Box {
+                AsyncImage(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(168.dp)
+                        .padding(4.dp),
+                    model = pokemon.getImageUrl(),
+                    placeholder = painterResource(R.drawable.icon_pokeball_black),
+                    contentDescription = null
+                )
 
+                Box(
+                    modifier
+                        .padding(12.dp)
+                        .align(Alignment.TopEnd)
+                        .clickable { onFavoriteEvent(pokemon) }
+                ) {
+                    Image(
+                        modifier = Modifier,
+                        alignment = Alignment.Center,
+                        painter = painterResource(
+                            when (pokemon.isFavorite) {
+                                true -> R.drawable.heart_full
+                                false -> R.drawable.heart_empty
+                            }
+                        ),
+                        contentScale = ContentScale.Fit,
+                        contentDescription = "",
+                        colorFilter = ColorFilter.tint(color = Color.White),
+                    )
+                }
+            }
             Text(
                 modifier = modifier
-                    .padding(start = 12.dp),
-                text = pokemon.name
+                    .padding(vertical = 6.dp),
+                text = pokemon.name,
             )
         }
-
-        Image(
-            modifier = Modifier
-                .size(24.dp)
-                .clickable { onFavoriteEvent(pokemon) },
-            alignment = Alignment.Center,
-            painter = painterResource(
-                when (pokemon.isFavorite) {
-                    true -> R.drawable.heart_full
-                    false -> R.drawable.heart_empty
-                }
-            ),
-            contentScale = ContentScale.Fit,
-            contentDescription = "",
-            colorFilter = ColorFilter.tint(color = Color.White),
-        )
     }
 }
 
@@ -226,21 +239,16 @@ private fun PreviewPokeItem() {
         )
     }
 
-    LazyColumn(
-        modifier = Modifier.fillMaxSize()
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
     ) {
-        items(list.size) {
-            Column {
-                PokemonItem(
-                    pokemon = list[it],
-                    onFavoriteEvent = {}
-                )
-                HorizontalDivider()
-            }
-        }
-
-        item {
-            PokeLoadingBar()
+        items(
+            count = list.size,
+            key = { idx -> list[idx].name + idx }) { idx ->
+            PokemonItem(
+                pokemon = list[idx],
+                onFavoriteEvent = {}
+            )
         }
     }
 }
