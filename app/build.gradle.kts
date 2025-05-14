@@ -61,6 +61,7 @@ dependencies {
     implementation(project(":feature-sanghyeong"))
     implementation(project(":feature-kanghwi:presentation"))
     implementation(project(":feature-woosung"))
+    implementation(project(":common"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

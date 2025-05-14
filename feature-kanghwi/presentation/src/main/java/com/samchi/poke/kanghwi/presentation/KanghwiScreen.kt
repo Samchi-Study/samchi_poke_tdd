@@ -11,47 +11,56 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil3.compose.AsyncImage
 import com.samchi.poke.kanghwi.model.Pokemon
+import kotlinx.coroutines.flow.collectLatest
 
 
 @Composable
 fun KanghwiRoute(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onShowSnackBar: suspend (String, String?) -> Boolean
 ) {
     val viewModel: KanghwiViewModel = hiltViewModel()
 
     val pagingData = viewModel.pagingFlow.collectAsLazyPagingItems()
 
+    val message = stringResource(R.string.error_message)
+    val undo = stringResource(R.string.retry)
 
-    LaunchedEffect(Unit) {
-        viewModel.retryFlow.collect {
-            pagingData.refresh()
+    if (pagingData.loadState.refresh is LoadState.Error) {
+        LaunchedEffect(Unit) {
+            onShowSnackBar(message, undo)
         }
     }
 
     KanghwiScreen(
         pagingData = pagingData,
         onFavoriteEvent = { viewModel.toggleFavorite(it) },
+        onShowSnackBar = onShowSnackBar
     )
 }
 
@@ -60,31 +69,61 @@ private fun KanghwiScreen(
     modifier: Modifier = Modifier,
     pagingData: LazyPagingItems<Pokemon>,
     onFavoriteEvent: (Pokemon) -> Unit,
+    onShowSnackBar: suspend (String, String?) -> Boolean
 ) {
     PokeList(
         modifier = modifier,
-        list = pagingData,
-        onFavoriteEvent = onFavoriteEvent
+        pagingData = pagingData,
+        onFavoriteEvent = onFavoriteEvent,
+        onShowSnackBar = onShowSnackBar
     )
 }
 
 @Composable
 private fun PokeList(
     modifier: Modifier = Modifier,
-    list: LazyPagingItems<Pokemon>,
-    onFavoriteEvent: (Pokemon) -> Unit
+    pagingData: LazyPagingItems<Pokemon>,
+    onFavoriteEvent: (Pokemon) -> Unit,
+    onShowSnackBar: suspend (String, String?) -> Boolean
 ) {
-    LazyColumn(modifier = modifier) {
+    val lazyListState = rememberLazyListState()
+    val message = stringResource(R.string.error_message)
+    val undo = stringResource(R.string.retry)
+
+    LaunchedEffect(lazyListState) {
+        snapshotFlow {
+            lazyListState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
+        }
+            .collectLatest { index ->
+                index?.let { idx ->
+                    if (pagingData.itemCount > 0 && idx >= pagingData.itemCount - 1) {
+                        onShowSnackBar(message, undo)
+                    }
+                }
+            }
+    }
+
+    LazyColumn(
+        state = lazyListState,
+        modifier = modifier
+    ) {
         items(
-            count = list.itemCount,
-            key = { idx -> list[idx]!!.name }) { idx ->
+            count = pagingData.itemCount,
+            key = { idx -> pagingData[idx]!!.name }) { idx ->
             Column {
                 PokemonItem(
                     modifier = modifier,
-                    pokemon = list[idx]!!,
+                    pokemon = pagingData[idx]!!,
                     onFavoriteEvent = onFavoriteEvent
                 )
                 HorizontalDivider()
+            }
+        }
+
+        when {
+            pagingData.loadState.refresh is LoadState.Loading ||
+                    pagingData.loadState.append is LoadState.Loading -> {
+                item { PokeLoadingBar() }
             }
         }
     }
@@ -103,11 +142,9 @@ private fun PokemonItem(
             .padding(horizontal = 16.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Row(
-
-        ) {
+        Row {
             AsyncImage(
-                modifier= Modifier.size(128.dp),
+                modifier = Modifier.size(128.dp),
                 model = pokemon.getImageUrl(),
                 placeholder = painterResource(R.drawable.icon_pokeball_black),
                 contentDescription = null
@@ -136,39 +173,18 @@ private fun PokemonItem(
             colorFilter = ColorFilter.tint(color = Color.White),
         )
     }
-
 }
 
 @Composable
-private fun PokemonError(
-    onRetryEvent: () -> Unit
-) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
-        Button(
-            modifier = Modifier
-                .align(Alignment.Center),
-            onClick = onRetryEvent,
-            shape = RoundedCornerShape(6.dp)
-        ) {
-            Text("Retry")
-        }
-    }
-}
-
-@Composable
-private fun PokemonCircleProgressBar() {
+private fun PokeLoadingBar() {
     Box(
         modifier = Modifier
             .background(Color.Transparent)
-            .fillMaxSize()
-            .clickable(enabled = false, onClick = {}),
+            .fillMaxWidth(),
         contentAlignment = Alignment.Center
     ) {
         CircularProgressIndicator(
-            modifier = Modifier
+            modifier = Modifier.padding(0.dp, 4.dp)
         )
     }
 }
@@ -177,18 +193,62 @@ private fun PokemonCircleProgressBar() {
 @Composable
 @Preview
 private fun PreviewPokeItem() {
-    PokemonItem(
-        pokemon = Pokemon(
+    val list = MutableList(5) {
+        Pokemon(
+            id = 0,
             "피카츄",
+            previous = null,
+            next = null,
             url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png",
             isFavorite = false
-        ),
-        onFavoriteEvent = {}
-    )
+        )
+    }
+
+    LazyColumn(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        items(list.size) {
+            Column {
+                PokemonItem(
+                    pokemon = list[it],
+                    onFavoriteEvent = {}
+                )
+                HorizontalDivider()
+            }
+        }
+
+        item {
+            PokeLoadingBar()
+        }
+    }
 }
 
 @Composable
 @Preview
 private fun PreviewError() {
-    PokemonError({})
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight(),
+        horizontalArrangement = Arrangement.SpaceAround,
+        verticalAlignment = Alignment.CenterVertically
+    )
+    {
+        Text(
+            text = stringResource(R.string.error_message),
+        )
+        TextButton(
+            onClick = {}
+        ) {
+            Text(
+                text = stringResource(R.string.retry),
+            )
+        }
+    }
+}
+
+@Composable
+@Preview
+private fun PreviewCircleProgressBar() {
+    PokeLoadingBar()
 }
