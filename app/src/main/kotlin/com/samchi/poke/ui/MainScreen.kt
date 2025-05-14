@@ -4,11 +4,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult.ActionPerformed
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -17,13 +13,12 @@ import com.samchi.feature.jungwon.presentation.JungwonRoute
 import com.samchi.feature.sanghyeong.navigator.SangHyeongRoute
 import com.samchi.feature.woosung.screen.list.WoosungRoute
 import com.samchi.poke.feature.jinkwang.JinKwangRoute
-import com.samchi.poke.kanghwi.presentation.KanghwiRoute
+import com.samchi.poke.kanghwi.presentation.KanghwiMain
 
 
 @Composable
 fun MainScreen() {
     val navController = rememberNavController()
-    val snackbarHostState = remember { SnackbarHostState() }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -31,8 +26,7 @@ fun MainScreen() {
             BottomAppBar {
                 BottomNavigationBar(navController = navController)
             }
-        },
-        snackbarHost = { SnackbarHost(snackbarHostState) }
+        }
     ) { innerPadding ->
         NavHost(
             navController = navController,
@@ -46,15 +40,7 @@ fun MainScreen() {
                     when (it.destination.route) {
                         NavigationItem.JinKwang.route -> JinKwangRoute()
                         NavigationItem.JungWon.route -> JungwonRoute()
-                        NavigationItem.KangHwi.route -> KanghwiRoute(
-                            onShowSnackBar = { message, actionLabel ->
-                                snackbarHostState.showSnackbar(
-                                    message,
-                                    actionLabel
-                                ) == ActionPerformed
-                            }
-                        )
-
+                        NavigationItem.KangHwi.route -> KanghwiMain()
                         NavigationItem.SangHyeong.route -> SangHyeongRoute()
                         NavigationItem.WooSung.route -> WoosungRoute()
                     }
