@@ -22,10 +22,10 @@ class PokemonRepositoryImpl @Inject constructor(
     private val dataStore: DataStore<Preferences>
 ) : PokemonRepository {
     private val cachedPokemonPage: MutableSet<PokemonPage> = mutableSetOf()
-    private val channels: Channel<LoadPageParam> = Channel(Channel.UNLIMITED)
+    private val channel: Channel<LoadPageParam> = Channel(Channel.UNLIMITED)
 
     override suspend fun loadNextPage() {
-        channels.send(LoadPageParam(PAGE_LIMIT, cachedPokemonPage.lastOrNull()?.nextOffset ?: 0))
+        channel.send(LoadPageParam(PAGE_LIMIT, cachedPokemonPage.lastOrNull()?.nextOffset ?: 0))
     }
 
     override fun getPokemonListFlow(): Flow<List<Pokemon>> {
@@ -39,7 +39,7 @@ class PokemonRepositoryImpl @Inject constructor(
     }
 
     private fun fetchPokemonPage(): Flow<PokemonPage> {
-        return channels.receiveAsFlow().map { loadPageParam ->
+        return channel.receiveAsFlow().map { loadPageParam ->
             val response: ResponsePokemonInfo =
                 pokeApi.getPokemonList(loadPageParam.limit, loadPageParam.offset)
             val favoriteIds = dataStore.data.first()[FAVORITE_POKEMON_NAMES] ?: emptySet()
