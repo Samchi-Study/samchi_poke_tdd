@@ -8,7 +8,6 @@ import com.samchi.poke.common.restartablestateflow.restartableStateIn
 import com.samchi.poke.model.Pokemon
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
@@ -24,9 +23,6 @@ class PokemonListViewModel @Inject constructor(
 ) : ViewModel() {
     private val actionChannel = Channel<PokemonListAction>(Channel.UNLIMITED)
 
-    private val actionFlow: SharedFlow<PokemonListAction> = actionChannel.receiveAsFlow()
-        .shareIn(viewModelScope, SharingStarted.WhileSubscribed(5_000))
-
     val uiState: RestartableStateFlow<PokemonListUiState> =
         pokemonRepository.getPokemonListFlow()
             .map<List<Pokemon>, PokemonListUiState> { PokemonListUiState.Success(it) }
@@ -40,9 +36,11 @@ class PokemonListViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            actionFlow.collect { action ->
-                handleActions(action)
-            }
+            actionChannel.receiveAsFlow()
+                .shareIn(viewModelScope, SharingStarted.WhileSubscribed(5_000))
+                .collect {
+                    handleActions(it)
+                }
         }
         dispatch(PokemonListAction.Initialize)
     }
