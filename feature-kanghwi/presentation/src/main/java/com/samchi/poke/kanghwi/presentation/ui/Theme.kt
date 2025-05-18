@@ -10,7 +10,7 @@ import androidx.compose.ui.graphics.Color
 
 
 @Composable
-fun KanghwiPokeTheme(
+internal fun KanghwiPokeTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
@@ -20,10 +20,13 @@ fun KanghwiPokeTheme(
         KanghwiColors.defaultLightColors()
     }
 
+    val textColor = if (darkTheme) colorScheme.white else colorScheme.black
+
     val backgroundColor = if (darkTheme) colorScheme.backgroundDark else colorScheme.backgroundLight
 
     CompositionLocalProvider(
         LocalColors provides colorScheme,
+        LocalTextColor provides textColor,
         LocalBackgroundColor provides backgroundColor
     ) {
         Box(
@@ -36,7 +39,7 @@ fun KanghwiPokeTheme(
 }
 
 
-object KanghwiPokeTddTheme {
+internal object KanghwiPokeTddTheme {
 
     val colors: KanghwiColors
         @Composable
@@ -45,5 +48,9 @@ object KanghwiPokeTddTheme {
     val backgroundColor: Color
         @Composable
         get() = LocalBackgroundColor.current
+
+    val textColor: Color
+        @Composable
+        get() = LocalTextColor.current
 
 }

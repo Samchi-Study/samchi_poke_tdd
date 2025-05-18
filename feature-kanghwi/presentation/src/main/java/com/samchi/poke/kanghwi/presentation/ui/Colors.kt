@@ -8,7 +8,7 @@ import com.samchi.poke.kanghwi.presentation.R
 
 
 @Immutable
-public data class KanghwiColors(
+internal data class KanghwiColors(
     val primary: Color,
     val background: Color,
     val backgroundLight: Color,
@@ -43,7 +43,7 @@ public data class KanghwiColors(
     val blue: Color,
 ) {
 
-    public companion object {
+    companion object {
         /**
          * Provides the default colors for the light mode of the app.
          *
@@ -91,7 +91,7 @@ public data class KanghwiColors(
          * @return A [PokedexColors] instance holding our color palette.
          */
         @Composable
-        public fun defaultLightColors(): KanghwiColors = KanghwiColors(
+        fun defaultLightColors(): KanghwiColors = KanghwiColors(
             primary = colorResource(id = R.color.colorPrimary),
             background = colorResource(id = R.color.background),
             backgroundLight = colorResource(id = R.color.background800),
