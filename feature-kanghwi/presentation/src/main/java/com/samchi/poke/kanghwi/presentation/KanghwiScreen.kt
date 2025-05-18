@@ -3,15 +3,12 @@ package com.samchi.poke.kanghwi.presentation
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -25,7 +22,6 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult.ActionPerformed
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -70,6 +66,7 @@ import coil3.request.allowHardware
 import coil3.toBitmap
 import com.samchi.poke.kanghwi.model.Pokemon
 import com.samchi.poke.kanghwi.presentation.ui.KanghwiPokeTddTheme
+import com.samchi.poke.kanghwi.presentation.ui.KanghwiPokeTheme
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -97,7 +94,7 @@ fun KanghwiMain(
         }
     }
 
-    KanghwiPokeTddTheme {
+    KanghwiPokeTheme {
         Scaffold(
             modifier = modifier.fillMaxSize(),
             snackbarHost = { SnackbarHost(snackbarHostState) }
@@ -325,57 +322,30 @@ fun Palette?.getBackgroundColor(): State<Color> {
 @Composable
 @Preview
 private fun PreviewPokeItem() {
-    val list = MutableList(5) {
-        Pokemon(
-            id = 0,
-            "피카츄",
-            previous = null,
-            next = null,
-            url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png",
-            isFavorite = false
-        )
-    }
-
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
-    ) {
-        items(
-            count = list.size,
-            key = { idx -> list[idx].name + idx }) { idx ->
-            PokemonItem(
-                pokemon = list[idx],
-                onFavoriteEvent = {}
+    KanghwiPokeTheme {
+        val list = MutableList(5) {
+            Pokemon(
+                id = 0,
+                "피카츄",
+                previous = null,
+                next = null,
+                url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png",
+                isFavorite = false
             )
         }
-    }
-}
 
-@Composable
-@Preview
-private fun PreviewError() {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight(),
-        horizontalArrangement = Arrangement.SpaceAround,
-        verticalAlignment = Alignment.CenterVertically
-    )
-    {
-        Text(
-            text = stringResource(R.string.error_message),
-        )
-        TextButton(
-            onClick = {}
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
         ) {
-            Text(
-                text = stringResource(R.string.retry),
-            )
+            items(
+                count = list.size,
+                key = { idx -> list[idx].name + idx }) { idx ->
+                PokemonItem(
+                    pokemon = list[idx],
+                    onFavoriteEvent = {}
+                )
+            }
         }
     }
-}
 
-@Composable
-@Preview
-private fun PreviewCircleProgressBar() {
-    PokeLoadingBar()
 }
