@@ -29,12 +29,14 @@ class PokemonRepositoryImpl @Inject constructor(
     }
 
     override fun getPokemonListFlow(): Flow<List<Pokemon>> {
-        return fetchPokemonPage().combine(getFavoritePokemonIds()) { api, favoritesIds ->
-            cachedPokemonPage.add(api)
-
-            cachedPokemonPage.map { it.dataList }
+        return fetchPokemonPage().combine(getFavoritePokemonIds()) { page, favoritesIds ->
+            cachedPokemonPage.add(page)
+            cachedPokemonPage
+                .map { it.dataList }
                 .flatten()
-                .map { pokemon -> pokemon.copy(isFavorite = favoritesIds.contains(pokemon.name)) }
+                .map { pokemon ->
+                    pokemon.copy(isFavorite = favoritesIds.contains(pokemon.name))
+                }
         }
     }
 
@@ -42,7 +44,6 @@ class PokemonRepositoryImpl @Inject constructor(
         return channel.receiveAsFlow().map { loadPageParam ->
             val response: ResponsePokemonInfo =
                 pokeApi.getPokemonList(loadPageParam.limit, loadPageParam.offset)
-            val favoriteIds = dataStore.data.first()[FAVORITE_POKEMON_NAMES] ?: emptySet()
 
             PokemonPage(
                 nextUrl = response.next,
@@ -51,7 +52,7 @@ class PokemonRepositoryImpl @Inject constructor(
                     Pokemon(
                         name = responsePokemon.name,
                         url = responsePokemon.url,
-                        isFavorite = responsePokemon.name in favoriteIds
+                        isFavorite = false // 기본 값은 false
                     )
                 }
             )
