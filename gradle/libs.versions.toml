@@ -34,6 +34,7 @@ junitKtx = "1.2.1"
 coil = "3.0.4"
 paging3 = "3.3.2"
 pagingCommonAndroid = "3.3.6"
+palette = "1.0.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -106,6 +107,8 @@ androidx-compose-constraintlayout = "androidx.constraintlayout:constraintlayout-
 
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil"}
 coil-network = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coil"}
+
+palette = { module = "androidx.palette:palette", version.ref = "palette" }
 
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-android-testing = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hilt" }

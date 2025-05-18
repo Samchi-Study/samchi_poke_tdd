@@ -18,4 +18,6 @@ dependencies {
 
     implementation(libs.paging3)
     implementation(libs.paging3.compose)
+
+    implementation(libs.palette)
 }
