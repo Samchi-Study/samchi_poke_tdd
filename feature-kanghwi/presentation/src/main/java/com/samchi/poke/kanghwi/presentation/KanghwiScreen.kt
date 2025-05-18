@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -27,14 +28,27 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.SnapshotMutationPolicy
+import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.runtime.structuralEqualityPolicy
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.DefaultAlpha
+import androidx.compose.ui.graphics.FilterQuality
+import androidx.compose.ui.graphics.drawscope.DrawScope.Companion.DefaultFilterQuality
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -46,7 +60,14 @@ import androidx.navigation.compose.rememberNavController
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.palette.graphics.Palette
+import coil3.SingletonImageLoader
 import coil3.compose.AsyncImage
+import coil3.compose.AsyncImagePainter
+import coil3.compose.LocalPlatformContext
+import coil3.request.ImageRequest
+import coil3.request.allowHardware
+import coil3.toBitmap
 import com.samchi.poke.kanghwi.model.Pokemon
 import com.samchi.poke.kanghwi.presentation.ui.KanghwiPokeTddTheme
 import kotlinx.coroutines.flow.collectLatest
@@ -160,24 +181,35 @@ private fun PokemonItem(
     pokemon: Pokemon,
     onFavoriteEvent: (Pokemon) -> Unit
 ) {
+    var palette by rememberPaletteState()
+    val paletteBackgroundColor by palette.getBackgroundColor()
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp),
-        shape = RoundedCornerShape(8.dp)
+        shape = RoundedCornerShape(8.dp),
+        colors = CardColors(
+            contentColor = paletteBackgroundColor,
+            containerColor = paletteBackgroundColor,
+            disabledContentColor = paletteBackgroundColor,
+            disabledContainerColor = paletteBackgroundColor
+        )
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Box {
-                AsyncImage(
+                KanghwiAsyncImage(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(168.dp)
                         .padding(4.dp),
-                    model = pokemon.getImageUrl(),
-                    placeholder = painterResource(R.drawable.icon_pokeball_black),
-                    contentDescription = null
+                    url = pokemon.getImageUrl(),
+                    contentDescription = null,
+                    onSuccess = {
+                        palette = Palette.from(it.result.image.toBitmap()).generate()
+                    }
                 )
 
                 Box(
@@ -205,6 +237,7 @@ private fun PokemonItem(
                 modifier = modifier
                     .padding(vertical = 6.dp),
                 text = pokemon.name,
+                color = Color.White
             )
         }
     }
@@ -221,6 +254,70 @@ private fun PokeLoadingBar() {
         CircularProgressIndicator(
             modifier = Modifier.padding(0.dp, 4.dp)
         )
+    }
+}
+
+@Composable
+fun KanghwiAsyncImage(
+    url: String,
+    contentDescription: String?,
+    modifier: Modifier = Modifier,
+    placeholder: Painter? = null,
+    error: Painter? = null,
+    fallback: Painter? = error,
+    onLoading: ((AsyncImagePainter.State.Loading) -> Unit)? = null,
+    onSuccess: ((AsyncImagePainter.State.Success) -> Unit)? = null,
+    onError: ((AsyncImagePainter.State.Error) -> Unit)? = null,
+    alignment: Alignment = Alignment.Center,
+    contentScale: ContentScale = ContentScale.Fit,
+    alpha: Float = DefaultAlpha,
+    colorFilter: ColorFilter? = null,
+    filterQuality: FilterQuality = DefaultFilterQuality,
+    clipToBounds: Boolean = true,
+) = AsyncImage(
+    model = ImageRequest.Builder(LocalContext.current)
+        .data(url)
+        .allowHardware(false)
+        .build(),
+    contentDescription = contentDescription,
+    imageLoader = SingletonImageLoader.get(LocalPlatformContext.current),
+    modifier = modifier,
+    placeholder = placeholder,
+    error = error,
+    fallback = fallback,
+    onLoading = onLoading,
+    onSuccess = onSuccess,
+    onError = onError,
+    alignment = alignment,
+    contentScale = contentScale,
+    alpha = alpha,
+    colorFilter = colorFilter,
+    filterQuality = filterQuality,
+    clipToBounds = clipToBounds,
+)
+
+@Composable
+private fun rememberPaletteState(
+    value: Palette? = null,
+    policy: SnapshotMutationPolicy<Palette?> = structuralEqualityPolicy(),
+): MutableState<Palette?> = remember(key1 = value) {
+    mutableStateOf(value = value, policy = policy)
+}
+
+@Composable
+fun Palette?.getBackgroundColor(): State<Color> {
+    val defaultColor = KanghwiPokeTddTheme.backgroundColor
+
+    return remember(this) {
+        derivedStateOf {
+            val rgb = this?.dominantSwatch?.rgb
+
+            if (rgb != null) {
+                Color(rgb)
+            } else {
+                defaultColor
+            }
+        }
     }
 }
 
