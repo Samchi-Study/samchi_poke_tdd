@@ -1,8 +1,9 @@
 package com.samchi.poke.feature.jinkwang.di
 
 import android.content.Context
-import com.samchi.poke.feature.jinkwang.data.PokemonDao
+import com.samchi.poke.feature.jinkwang.data.local.pokemon.PokemonDao
 import com.samchi.poke.feature.jinkwang.data.PokemonDatabase
+import com.samchi.poke.feature.jinkwang.data.local.favorite.FavoriteDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -19,9 +20,14 @@ internal object PokemonLocalModule {
         return database.pokemonDao()
     }
 
+    @Provides
+    fun provideFavoriteDao(database: PokemonDatabase): FavoriteDao {
+        return database.favoriteDao()
+    }
+
     @Singleton
     @Provides
-    fun provideDataBase(@ApplicationContext context: Context): PokemonDatabase {
+    fun providePokemonDatabase(@ApplicationContext context: Context): PokemonDatabase {
         return PokemonDatabase.getDatabase(context)
     }
 }
