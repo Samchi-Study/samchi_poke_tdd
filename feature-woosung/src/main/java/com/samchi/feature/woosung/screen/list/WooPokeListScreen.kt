@@ -17,54 +17,43 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.samchi.feature.woosung.component.PokeItem
-import com.samchi.feature.woosung.domain.model.WoosungPokemon
 import com.samchi.poke.model.Pokemon
 import com.samchi.poke.model.PokemonInfo
 
 @Composable
 fun WoosungRoute(
     modifier: Modifier = Modifier,
-    viewModel: WooPokeListViewModel = hiltViewModel()
+    viewmodel: WooPokeListViewModel = hiltViewModel()
 ): Unit {
-    val pokemonPagingItems: LazyPagingItems<WoosungPokemon> =
-        viewModel.pagingList.collectAsLazyPagingItems()
-    val favoritePokemonList by viewModel.favoritePokemonList.collectAsStateWithLifecycle()
+    val pokemonPagingItems: LazyPagingItems<Pokemon> =
+        viewmodel.pagingList.collectAsLazyPagingItems()
 
-    WooPokeListScreen(
-        pokemonPaging = pokemonPagingItems,
-        favoritePokemonList = favoritePokemonList,
-        onFavoriteClick = { viewModel.toggleFavorite(it) },
-        onRetryClicked = {}
-    )
+
+    WooPokeListScreen(pokemonPagingItems, onRetryClicked = {})
 }
 
 @Composable
 internal fun WooPokeListScreen(
-    pokemonPaging: LazyPagingItems<WoosungPokemon>,
-    favoritePokemonList: List<WoosungPokemon> = emptyList(),
-    onFavoriteClick: (String) -> Unit = {},
+    pokemonPaging: LazyPagingItems<Pokemon>,
     onRetryClicked: () -> Unit = {}
 ): Unit {
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
+
         contentPadding = PaddingValues(10.dp),
     ) {
         items(pokemonPaging.itemCount) {
-            val pokemon = pokemonPaging[it] ?: return@items
             PokeItem(
-                pokemonImage = pokemon.getImageUrl(),
-                isFavorite = pokemon.isFavorite,
-                onFavoriteClick = { onFavoriteClick(pokemon.name) }
+                pokemonImage = pokemonPaging[it]!!.getImageUrl()
             ) {
                 Text(
                     modifier = Modifier.align(alignment = Alignment.CenterHorizontally),
-                    text = pokemon.name
+                    text = pokemonPaging[it]!!.name
                 )
             }
         }

@@ -43,11 +43,8 @@ internal class WoosungRemoteMediator(
 
             // 응답을 Entity로 변환
             val pokemonEntities = response.results.mapIndexed { index, pokemonItem ->
-                // API에서 반환된 URL에서 포켓몬 ID 추출
-                val pokemonId = extractPokemonIdFromUrl(pokemonItem.url)
-
                 PokemonEntity(
-                    id = pokemonId,
+                    id = (page - 1) * 20 + index + 1, // ID 생성 로직 (API가 페이지당 20개 결과를 반환한다고 가정)
                     name = pokemonItem.name,
                     url = pokemonItem.url,
                     isFavorite = false
@@ -69,11 +66,5 @@ internal class WoosungRemoteMediator(
         } catch (e: HttpException) {
             MediatorResult.Error(e)
         }
-    }
-
-    private fun extractPokemonIdFromUrl(url: String): Int {
-        // URL 형식: "https://pokeapi.co/api/v2/pokemon/{id}/"
-        val idString = url.trim('/').split("/").last()
-        return idString.toIntOrNull() ?: 0
     }
 }
