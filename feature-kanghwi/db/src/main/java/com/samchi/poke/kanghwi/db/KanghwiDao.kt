@@ -1,5 +1,6 @@
 package com.samchi.poke.kanghwi.db
 
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -7,7 +8,9 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import androidx.room.Upsert
+import com.samchi.poke.kanghwi.db.entity.FavoritePokemonEntity
 import com.samchi.poke.kanghwi.db.entity.PokemonEntity
+import kotlinx.coroutines.flow.Flow
 
 
 @Dao
@@ -31,7 +34,23 @@ interface KanghwiDao {
     @Upsert
     suspend fun upsertPokemon(entity: PokemonEntity)
 
-    @Query("DELETE FROM kanghwipokemon WHERE name =:name")
+    @Query("DELETE FROM Kanghwipokemon WHERE name =:name")
     suspend fun deletePokemon(name: String)
 
+    @Query("DELETE FROM KanghwiPokemon")
+    suspend fun deleteAllPokemon()
+
+    @Query("SELECT * FROM KanghwiPokemon")
+    fun getPagingSource(): PagingSource<Int, PokemonEntity>
+
+
+    // 좋아요를 클릭한 포켓몬 정보는 별도로 관리
+    @Query("SELECT * FROM FAVORITEPOKEMON")
+    fun getFavoritePokemonList(): Flow<List<FavoritePokemonEntity>>
+
+    @Insert
+    suspend fun insertFavoritePokemon(pokemon: FavoritePokemonEntity)
+
+    @Delete
+    suspend fun deleteFavoritePokemon(pokemon: FavoritePokemonEntity)
 }
