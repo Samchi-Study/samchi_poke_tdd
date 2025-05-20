@@ -3,7 +3,6 @@ package com.samchi.feature.woosung.module
 import android.content.Context
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.samchi.feature.woosung.data.local.WoosungDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,12 +21,12 @@ class RoomModule {
         @ApplicationContext
         context: Context
     ): RoomDatabase = Room
-        .databaseBuilder(context, WoosungDatabase::class.java, "Woosung.db")
+        .databaseBuilder(context, KanghwiDatabase::class.java, "Woosung.db")
         .build()
 
     @Provides
     fun provideDao(
         roomDatabase: RoomDatabase
-    ) = (roomDatabase as WoosungDatabase).woosungDao()
+    ) = (roomDatabase as KanghwiDatabase).kanghwiDao()
 
 }

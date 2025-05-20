@@ -1,6 +1,5 @@
 package com.samchi.feature.woosung.data.local
 
-import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -15,9 +14,6 @@ interface WoosungDao {
 
     @Query("SELECT * FROM WSPokemon WHERE id =:id ")
     suspend fun getPokemon(id: Int): PokemonEntity?
-
-    @Query("SELECT * FROM WSPokemon ORDER BY id ASC")
-    fun getPagingSource(): PagingSource<Int, PokemonEntity>
 
     @Insert
     suspend fun insertPokemon(entity: PokemonEntity)
