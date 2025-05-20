@@ -7,7 +7,6 @@ import com.samchi.feature.sanghyeong.model.SangHyeongPokemon
 
 internal interface SangHyeongUiActions {
     fun onRetry()
-    fun onLoadMore()
     fun onFavoriteClick(pokemon: SangHyeongPokemon)
 }
 
@@ -16,10 +15,6 @@ internal fun rememberSangHyeongUiActions(viewModel: SangHyeongViewModel) = remem
     object : SangHyeongUiActions {
         override fun onRetry() {
             viewModel.onRetry()
-        }
-
-        override fun onLoadMore() {
-            viewModel.onLoadMore()
         }
 
         override fun onFavoriteClick(pokemon: SangHyeongPokemon) {

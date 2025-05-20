@@ -1,51 +1,46 @@
 package com.samchi.feature.sanghyeong.repository
 
-import android.net.Uri
-import com.samchi.feature.sanghyeong.data.db.SangHyeongDao
-import com.samchi.feature.sanghyeong.data.asSangHyeongDomain
-import com.samchi.feature.sanghyeong.data.asSangHyeongEntity
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import com.samchi.feature.sanghyeong.data.db.entity.SangHyeongPokemonEntity
 import com.samchi.feature.sanghyeong.model.SangHyeongPokemon
-import com.samchi.poke.network.PokeApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.onCompletion
 import javax.inject.Inject
 
 class SangHyeongRepositoryImpl @Inject constructor(
-    private val pokeApi: PokeApi,
-    private val dao: SangHyeongDao,
+    private val localDataSource: SangHyeongLocalDataSource,
+    private val pagingSource: SangHyeongPagingSource,
 ) : SangHyeongRepository {
-    private var loading: Boolean = false
     private var offset: String? = null
 
-    override fun getPokemonList(index: Int): Flow<List<SangHyeongPokemon>> {
-        return flow {
-            if (loading.not()) {
-                loading = true
-                val result = pokeApi.getPokemonList(limit = LIMIT, offset = index * LIMIT)
-                offset = getNextOffset(nextUrl = result.next ?: "")
+    override fun getPokemonListFlow(): Flow<PagingData<SangHyeongPokemon>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = PAGE_SIZE,
+                enablePlaceholders = false,
+            ),
+            pagingSourceFactory = { pagingSource },
+        ).flow
+    }
 
-                dao.insertPokemonList(entities = result.results.map { it.asSangHyeongEntity() })
-
-                emit(value = result.results.map { it.asSangHyeongDomain() })
-            }
-        }.onCompletion {
-            loading = false
-        }
+    override fun getFavoritePokemonsFlow(): Flow<List<SangHyeongPokemonEntity>> {
+        return localDataSource.getFavoritePokemons()
     }
 
     override fun hasMoreData(): Boolean {
         return offset?.isNotEmpty() == true
     }
 
-    private fun getNextOffset(nextUrl: String): String {
-        return runCatching {
-            val uri = Uri.parse(nextUrl)
-            uri.getQueryParameter("offset") ?: ""
-        }.getOrDefault(defaultValue = "")
+    override suspend fun toggleFavorite(pokemon: SangHyeongPokemon) {
+        if (pokemon.isFavorite) {
+            localDataSource.deleteFavoritePokemon(pokemon = pokemon)
+        } else {
+            localDataSource.insertFavoritePokemon(pokemon = pokemon)
+        }
     }
 
     companion object {
-        private const val LIMIT = 30
+        private const val PAGE_SIZE = 30
     }
 }

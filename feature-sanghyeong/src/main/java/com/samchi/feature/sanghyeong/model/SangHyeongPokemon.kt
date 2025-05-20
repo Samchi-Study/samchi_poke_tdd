@@ -2,7 +2,7 @@ package com.samchi.feature.sanghyeong.model
 
 data class SangHyeongPokemon(
     val name: String,
-    private val url: String,
+    val url: String,
     val isFavorite: Boolean = false,
 ) {
     fun getImageUrl(): String {

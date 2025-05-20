@@ -5,13 +5,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.paging.compose.LazyPagingItems
 import com.samchi.feature.sanghyeong.model.SangHyeongPokemon
-import com.samchi.poke.model.Pokemon
-import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 internal fun SangHyeongScreen(
-    pokemonList: ImmutableList<SangHyeongPokemon>,
+    pokemonList: LazyPagingItems<SangHyeongPokemon>,
     uiState: SangHyeongUiState,
     uiActions: SangHyeongUiActions,
 ) {
@@ -19,16 +18,15 @@ internal fun SangHyeongScreen(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center,
     ) {
-        if (uiState.error != null) {
+        if (pokemonList.loadState.hasError) {
             SangHyeongErrorScreen(
-                throwable = uiState.error,
+                throwable = Throwable(message = "에러가 발생했습니다."),
                 onRetry = uiActions::onRetry,
             )
         } else {
             SangHyeongSuccessScreen(
                 pokemonList = pokemonList,
                 loading = uiState.loading,
-                onBottomReached = uiActions::onLoadMore,
                 onFavoriteClick = uiActions::onFavoriteClick,
             )
         }
