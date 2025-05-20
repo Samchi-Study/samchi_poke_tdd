@@ -13,6 +13,7 @@ import com.samchi.poke.network.PokeApi
 import com.samchi.poke.network.dto.ResponsePokemon
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 @OptIn(ExperimentalPagingApi::class)
@@ -23,7 +24,7 @@ internal class JinKwangRepositoryImpl @Inject constructor(
     private val pokemonRemoteMediator: PokemonRemoteMediator,
 ) : JinKwangRepository {
 
-    override fun getPokemonFlow(): Flow<PagingData<PokemonEntity>> {
+    override fun getPokemonFlow(): Flow<PagingData<Pokemon>> {
         return Pager(
             config = PagingConfig(
                 pageSize = PokemonRemoteMediator.PAGING_SIZE,
@@ -33,8 +34,9 @@ internal class JinKwangRepositoryImpl @Inject constructor(
             remoteMediator = pokemonRemoteMediator,
             pagingSourceFactory = { pokemonDao.getPokemonPagingSource() }
         ).flow.combine(favoriteDao.getFavorites()) { pagingData, favorites ->
-            pagingData.map { pokemon ->
-                pokemon.copy(isFavorite = favorites.any { it.name == pokemon.name }) }
+            pagingData.map { entity ->
+                entity.copy(isFavorite = favorites.any { it.name == entity.name }).toItem()
+            }
         }
     }
 
@@ -59,6 +61,7 @@ internal class JinKwangRepositoryImpl @Inject constructor(
     }
 
     override suspend fun unFavoritePokemon(name: String) {
+        favoriteDao.delete(name)
         pokemonDao.updateFavorite(name, false)
     }
 
@@ -69,6 +72,14 @@ internal class JinKwangRepositoryImpl @Inject constructor(
             nameField = name,
             imageUrl = url,
             isFavorite = isFavorite(),
+        )
+    }
+
+    private fun PokemonEntity.toItem(): Pokemon {
+        return Pokemon(
+            nameField = name,
+            imageUrl = url,
+            isFavorite = isFavorite,
         )
     }
 }

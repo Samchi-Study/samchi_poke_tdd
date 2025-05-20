@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 internal interface JinKwangRepository {
 
-    fun getPokemonFlow(): Flow<PagingData<PokemonEntity>>
+    fun getPokemonFlow(): Flow<PagingData<Pokemon>>
 
     suspend fun getPokemonList(
         limit: Int,
