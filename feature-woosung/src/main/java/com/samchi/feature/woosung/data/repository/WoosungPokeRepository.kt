@@ -1,7 +1,14 @@
 package com.samchi.feature.woosung.data.repository
 
-import com.samchi.poke.model.Pokemon
+import androidx.paging.PagingData
+import com.samchi.feature.woosung.domain.model.WoosungPokemon
+import kotlinx.coroutines.flow.Flow
 
 interface WoosungPokeRepository {
-    suspend fun getPokemonList(): List<Pokemon>
+
+    fun getPokemonList(): Flow<PagingData<WoosungPokemon>>
+
+    suspend fun toggleFavorite(name: String)
+
+    fun getFavoritePokemonList(): Flow<List<WoosungPokemon>>
 }
