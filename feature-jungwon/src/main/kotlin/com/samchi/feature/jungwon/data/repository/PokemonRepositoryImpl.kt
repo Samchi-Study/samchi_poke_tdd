@@ -1,19 +1,84 @@
 package com.samchi.feature.jungwon.data.repository
 
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringSetPreferencesKey
+import com.samchi.feature.jungwon.data.model.LoadPageParam
 import com.samchi.feature.jungwon.data.model.PokemonPage
-import com.samchi.feature.jungwon.data.model.toPokemonPage
+import com.samchi.poke.model.Pokemon
 import com.samchi.poke.network.PokeApi
 import com.samchi.poke.network.dto.ResponsePokemonInfo
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.receiveAsFlow
 import javax.inject.Inject
 
 class PokemonRepositoryImpl @Inject constructor(
-    private val pokeApi: PokeApi
-): PokemonRepository {
-    override suspend fun getPokemonPage(limit: Int, offset: Int): Result<PokemonPage> {
-        return runCatching {
-            val response: ResponsePokemonInfo = pokeApi.getPokemonList(limit, offset)
+    private val pokeApi: PokeApi,
+    private val dataStore: DataStore<Preferences>
+) : PokemonRepository {
+    private val cachedPokemonPage: MutableSet<PokemonPage> = mutableSetOf()
+    private val channel: Channel<LoadPageParam> = Channel(Channel.UNLIMITED)
 
-            response.toPokemonPage()
+    override suspend fun loadNextPage() {
+        channel.send(LoadPageParam(PAGE_LIMIT, cachedPokemonPage.lastOrNull()?.nextOffset ?: 0))
+    }
+
+    override fun getPokemonListFlow(): Flow<List<Pokemon>> {
+        return fetchPokemonPage().combine(getFavoritePokemonIds()) { page, favoritesIds ->
+            cachedPokemonPage.add(page)
+            cachedPokemonPage
+                .map { it.dataList }
+                .flatten()
+                .map { pokemon ->
+                    pokemon.copy(isFavorite = favoritesIds.contains(pokemon.name))
+                }
         }
+    }
+
+    private fun fetchPokemonPage(): Flow<PokemonPage> {
+        return channel.receiveAsFlow().map { loadPageParam ->
+            val response: ResponsePokemonInfo =
+                pokeApi.getPokemonList(loadPageParam.limit, loadPageParam.offset)
+
+            PokemonPage(
+                nextUrl = response.next,
+                previousUrl = response.previous,
+                dataList = response.results.map { responsePokemon ->
+                    Pokemon(
+                        name = responsePokemon.name,
+                        url = responsePokemon.url,
+                        isFavorite = false // 기본 값은 false
+                    )
+                }
+            )
+        }
+    }
+
+    override suspend fun toggleFavorite(pokemon: Pokemon) {
+        dataStore.edit { preferences ->
+            val currentNames = preferences[FAVORITE_POKEMON_NAMES] ?: emptySet()
+            val pokemonName = pokemon.name
+
+            preferences[FAVORITE_POKEMON_NAMES] = if (pokemonName in currentNames) {
+                currentNames - pokemonName
+            } else {
+                currentNames + pokemonName
+            }
+        }
+    }
+
+    private fun getFavoritePokemonIds(): Flow<Set<String>> =
+        dataStore.data.map { preferences ->
+            preferences[FAVORITE_POKEMON_NAMES] ?: emptySet()
+        }
+
+    companion object {
+        private val FAVORITE_POKEMON_NAMES = stringSetPreferencesKey("favorite_pokemon_names")
+        private const val PAGE_LIMIT = 20
     }
 }
