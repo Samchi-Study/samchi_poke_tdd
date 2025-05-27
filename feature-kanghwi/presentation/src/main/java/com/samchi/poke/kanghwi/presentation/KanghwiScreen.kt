@@ -96,7 +96,10 @@ private fun PokeList(
         }
             .collectLatest { index ->
                 index?.let { idx ->
-                    if (pagingData.itemCount > 0 && idx >= pagingData.itemCount - 1) {
+                    if (
+                        (pagingData.itemCount > 0 && idx >= pagingData.itemCount - 1) &&
+                        pagingData.loadState.append is LoadState.Error
+                    ) {
                         onShowSnackBar(message, undo)
                     }
                 }
