@@ -23,30 +23,24 @@ class PokemonPagingMediator(
         return try {
             when (loadType) {
                 LoadType.REFRESH -> {
-                    val localEntities = dao.getPokemonList()
+                    val response = pokeApi.getPokemonList(
+                        limit = state.config.initialLoadSize,
+                        offset = 0
+                    )
 
-                    if (localEntities.isNotEmpty()) {
-                        return MediatorResult.Success(false)
-                    } else {
-                        val response = pokeApi.getPokemonList(
-                            limit = state.config.initialLoadSize,
-                            offset = 0
-                        )
-
-                        response.results
-                            .takeIf { it.isNotEmpty() }
-                            ?.sortedBy { it.name }
-                            ?.map {
-                                it.toEntity(
-                                    previous = response.previous,
-                                    next = response.next
-                                )
-                            }
-                            ?.run {
-                                dao.insertPokemonList(this)
-                                return MediatorResult.Success(false)
-                            } ?: return MediatorResult.Success(true)
-                    }
+                    response.results
+                        .takeIf { it.isNotEmpty() }
+                        ?.sortedBy { it.name }
+                        ?.map {
+                            it.toEntity(
+                                previous = response.previous,
+                                next = response.next
+                            )
+                        }
+                        ?.run {
+                            dao.insertPokemonList(this)
+                            return MediatorResult.Success(false)
+                        } ?: return MediatorResult.Success(true)
                 }
 
                 LoadType.PREPEND -> return MediatorResult.Success(false)
