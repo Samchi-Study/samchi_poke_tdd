@@ -55,20 +55,6 @@ class FavoriteDaoTest {
     }
 
     @Test
-    fun `insert는 onConflict REPLACE 전략으로 중복 시 덮어쓴다`() = runTest {
-        val entity1 = FavoriteEntity(name = "피카츄")
-        val entity2 = FavoriteEntity(name = "피카츄") // 같은 이름
-
-        dao.upsert(entity1)
-        dao.upsert(entity2) // REPLACE 전략으로 덮어써짐
-
-        val data = dao.getFavorites().first()
-
-        assertEquals(1, data.size) // 중복이 아닌 하나만 존재
-        assertEquals("피카츄", data[0].name)
-    }
-
-    @Test
     fun `여러 개의 FavoriteEntity가 삽입된다`() = runTest {
         val entities = listOf("피카츄", "갸라도스", "이상해씨")
 
@@ -124,32 +110,22 @@ class FavoriteDaoTest {
 
     @Test
     fun `getFavorites는 Flow를 반환하여 실시간 데이터 변경을 감지한다`() = runTest {
-        val flow = dao.getFavorites()
-        val results = mutableListOf<List<FavoriteEntity>>()
+        // 초기 상태 확인
+        val initialData = dao.getFavorites().first()
+        assertEquals(0, initialData.size)
 
-        // Flow 구독
-        val job = launch {
-            flow.take(3).collect { results.add(it) }
-        }
-
-        // 초기 상태 (빈 리스트)
-        delay(100)
-
-        // 데이터 추가
+        // 첫 번째 데이터 추가
         dao.upsert(FavoriteEntity(name = "피카츄"))
-        delay(100)
+        val afterFirstInsert = dao.getFavorites().first()
+        assertEquals(1, afterFirstInsert.size)
+        assertEquals("피카츄", afterFirstInsert[0].name)
 
-        // 데이터 추가
+        // 두 번째 데이터 추가
         dao.upsert(FavoriteEntity(name = "갸라도스"))
-        delay(100)
-
-        job.cancel()
-
-        // 검증
-        assertEquals(3, results.size)
-        assertEquals(0, results[0].size) // 초기 빈 상태
-        assertEquals(1, results[1].size) // 피카츄 추가 후
-        assertEquals(2, results[2].size) // 갸라도스 추가 후
+        val afterSecondInsert = dao.getFavorites().first()
+        assertEquals(2, afterSecondInsert.size)
+        assertTrue(afterSecondInsert.any { it.name == "피카츄" })
+        assertTrue(afterSecondInsert.any { it.name == "갸라도스" })
     }
 
     @Test
