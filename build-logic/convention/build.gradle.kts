@@ -39,5 +39,9 @@ gradlePlugin {
             id = "com.samchi.poke.library"
             implementationClass = "AndroidLibraryConventionPlugin"
         }
+        register("androidRoom"){
+            id = "com.samchi.poke.room"
+            implementationClass = "AndroidRoomConventionPlugin"
+        }
     }
 }
