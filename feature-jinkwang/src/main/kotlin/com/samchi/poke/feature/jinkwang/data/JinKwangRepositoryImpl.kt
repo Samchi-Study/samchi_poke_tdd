@@ -13,7 +13,6 @@ import com.samchi.poke.network.PokeApi
 import com.samchi.poke.network.dto.ResponsePokemon
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 @OptIn(ExperimentalPagingApi::class)
@@ -56,7 +55,7 @@ internal class JinKwangRepositoryImpl @Inject constructor(
     }
 
     override suspend fun favoritePokemon(name: String) {
-        favoriteDao.insert(FavoriteEntity(name))
+        favoriteDao.upsert(FavoriteEntity(name))
         pokemonDao.updateFavorite(name, true)
     }
 
