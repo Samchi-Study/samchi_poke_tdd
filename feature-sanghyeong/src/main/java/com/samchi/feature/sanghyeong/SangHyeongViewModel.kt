@@ -2,7 +2,7 @@ package com.samchi.feature.sanghyeong
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.samchi.feature.sanghyeong.data.toPokemon
+import com.samchi.feature.sanghyeong.model.SangHyeongPokemon
 import com.samchi.feature.sanghyeong.repository.SangHyeongRepository
 import com.samchi.feature.sanghyeong.ui.SangHyeongUiState
 import com.samchi.poke.model.Pokemon
@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -27,10 +28,10 @@ class SangHyeongViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(SangHyeongUiState())
     val uiState = _uiState.asStateFlow()
 
-    private var currentPokemonList = mutableListOf<Pokemon>()
+    private var currentPokemonList = mutableListOf<SangHyeongPokemon>()
 
     private val fetchingIndex = MutableStateFlow(0)
-    val pokemonList: StateFlow<List<Pokemon>> = fetchingIndex.flatMapLatest { index ->
+    val pokemonList: StateFlow<List<SangHyeongPokemon>> = fetchingIndex.flatMapLatest { index ->
         sangHyeongRepository.getPokemonList(index = index)
             .onStart { setLoading(loading = true) }
             .onCompletion { setLoading(loading = false) }
@@ -64,5 +65,11 @@ class SangHyeongViewModel @Inject constructor(
 
     fun onLoadMore() {
         loadMore()
+    }
+
+    fun onFavoriteClick(pokemon: SangHyeongPokemon) {
+        viewModelScope.launch {
+            sangHyeongRepository
+        }
     }
 }

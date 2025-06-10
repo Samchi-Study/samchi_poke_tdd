@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.samchi.feature.sanghyeong.model.SangHyeongPokemon
 import com.samchi.feature.sanghyeong.ui.component.PokemonItem
 import com.samchi.feature.sanghyeong.ui.extension.OnBottomReached
 import com.samchi.poke.model.Pokemon
@@ -18,9 +19,10 @@ import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 internal fun SangHyeongSuccessScreen(
-    pokemonList: ImmutableList<Pokemon>,
+    pokemonList: ImmutableList<SangHyeongPokemon>,
     loading: Boolean = false,
     onBottomReached: () -> Unit,
+    onFavoriteClick: (SangHyeongPokemon) -> Unit,
 ) {
     val lazyListState = rememberLazyListState()
     lazyListState.OnBottomReached { onBottomReached.invoke() }
@@ -32,7 +34,10 @@ internal fun SangHyeongSuccessScreen(
         verticalArrangement = Arrangement.spacedBy(space = 10.dp)
     ) {
         items(items = pokemonList) { pokemon ->
-            PokemonItem(pokemon = pokemon)
+            PokemonItem(
+                pokemon = pokemon,
+                onFavoriteClick = onFavoriteClick,
+            )
         }
     }
 

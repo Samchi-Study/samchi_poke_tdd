@@ -13,5 +13,5 @@ import javax.inject.Singleton
 internal abstract class RepositoryModule {
     @Binds
     @Singleton
-    abstract fun provideSangHyeongRepository(sangHyeongRepository: SangHyeongRepositoryImpl): SangHyeongRepository
+    abstract fun bindSangHyeongRepository(sangHyeongRepository: SangHyeongRepositoryImpl): SangHyeongRepository
 }
