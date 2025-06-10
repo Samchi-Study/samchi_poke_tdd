@@ -29,18 +29,21 @@ class PokemonPagingMediator(
                     )
 
                     response.results
-                        .takeIf { it.isNotEmpty() }
-                        ?.sortedBy { it.name }
-                        ?.map {
+                        .sortedBy { it.name }
+                        .map {
                             it.toEntity(
                                 previous = response.previous,
                                 next = response.next
                             )
                         }
-                        ?.run {
-                            dao.insertPokemonList(this)
-                            return MediatorResult.Success(false)
-                        } ?: return MediatorResult.Success(true)
+                        .run {
+                            if (isNotEmpty()) {
+                                dao.insertPokemonList(this)
+                                return MediatorResult.Success(false)
+                            } else {
+                                return MediatorResult.Success(true)
+                            }
+                        }
                 }
 
                 LoadType.PREPEND -> return MediatorResult.Success(false)
@@ -54,18 +57,21 @@ class PokemonPagingMediator(
                         )
 
                         response.results
-                            .takeIf { it.isNotEmpty() }
-                            ?.sortedBy { it.name }
-                            ?.map {
+                            .sortedBy { it.name }
+                            .map {
                                 it.toEntity(
                                     previous = response.previous,
                                     next = response.next
                                 )
                             }
-                            ?.run {
-                                dao.insertPokemonList(this)
-                                return MediatorResult.Success(false)
-                            } ?: return MediatorResult.Success(true)
+                            .run {
+                                if (isNotEmpty()) {
+                                    dao.insertPokemonList(this)
+                                    return MediatorResult.Success(false)
+                                } else {
+                                    return MediatorResult.Success(true)
+                                }
+                            }
 
                     } ?: return MediatorResult.Success(true)
                 }
