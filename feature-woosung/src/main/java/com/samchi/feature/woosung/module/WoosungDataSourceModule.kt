@@ -1,7 +1,7 @@
 package com.samchi.feature.woosung.module
 
+import com.samchi.feature.woosung.data.remote.WoosungPokeRemoteDataSource
 import com.samchi.poke.network.PokeApi
-import com.samchi.feature.woosung.data.datasource.WoosungPokeRemoteDataSource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

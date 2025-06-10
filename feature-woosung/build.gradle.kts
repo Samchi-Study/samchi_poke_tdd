@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.samchi.poke.feature)
     alias(libs.plugins.compose.compiler)
     kotlin("plugin.serialization")
+    id("com.google.devtools.ksp")
 }
 
 android {
