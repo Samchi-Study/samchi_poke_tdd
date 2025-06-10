@@ -1,4 +1,4 @@
-package com.samchi.feature.jungwon.presentation.list
+package com.samchi.feature.jungwon.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -19,35 +19,30 @@ class PokemonListViewModel @Inject constructor(
     private val _uiState: MutableStateFlow<PokemonListUiState> =
         MutableStateFlow(PokemonListUiState.Initial)
 
-    val uiState: StateFlow<PokemonListUiState> = _uiState.asStateFlow()
+    val uiState: StateFlow<PokemonListUiState>
+        get() = _uiState.asStateFlow()
 
     init {
         loadFirstPage()
     }
 
-    private fun loadFirstPage() {
+    fun loadFirstPage() {
         viewModelScope.launch {
-            pokemonRepository.getPokemonPage(20, 0)
+            _uiState.update { PokemonListUiState.Loading }
+            pokemonRepository.getPokemonPage()
                 .handleUiState()
         }
     }
 
     fun loadNextPage() {
         viewModelScope.launch {
-            val currentState = uiState.value
-            if (currentState is PokemonListUiState.Success) {
-                val currentList = currentState.data.dataList
-                val nextOffset: Int = currentState.data.nextOffset ?: return@launch
-                pokemonRepository.getPokemonPage(offset = nextOffset)
-                    .onSuccess { result ->
-                        val updatedList = currentList + result.dataList
-                        _uiState.update {
-                            PokemonListUiState.Success(data = result.copy(dataList = updatedList))
-                        }
-                    }.onFailure {
-                        _uiState.value = PokemonListUiState.Error("Failed to load next page")
-                    }
-            }
+            if (_uiState.value !is PokemonListUiState.Success) return@launch
+
+            val currentPage = (_uiState.value as PokemonListUiState.Success).data
+            val nextPageOffSet: Int = currentPage.nextOffset ?: return@launch
+
+            pokemonRepository.getPokemonPage(offset = nextPageOffSet)
+                .handleUiState()
         }
     }
 
